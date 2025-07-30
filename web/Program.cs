@@ -1,7 +1,18 @@
 var builder = WebApplication.CreateBuilder(args);
 
+IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json");
+
+string env = "Development";
+if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production"){ env = "Production"; }
+
+configBuilder.AddJsonFile($"appsettings.{env}.json");
+
+IConfigurationRoot config = configBuilder.Build();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton(config);
 
 var app = builder.Build();
 
@@ -9,7 +20,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

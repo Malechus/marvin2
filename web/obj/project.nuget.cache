@@ -1,8 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "n4SkGRZ0Wo6/EIngUbsa2akVqOJlfofRtKjaIcykM0H7CBhthTriRKmjBpo3hzf5nriLAd2SZ4ECI808hobLRA==",
+  "dgSpecHash": "pJrSsaCJqz9WLExjut1uxayhkcl18+FzhlzDNpJNFstEjLNYm4aizw+hYaIFM8AcvA7sUjPE5xyUrdGIoWLxjQ==",
   "success": true,
   "projectFilePath": "/home/malechus/source/repos/marvin2/web/web.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/malechus/.nuget/packages/microsoft.entityframeworkcore/8.0.18/microsoft.entityframeworkcore.8.0.18.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.entityframeworkcore.abstractions/8.0.18/microsoft.entityframeworkcore.abstractions.8.0.18.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.entityframeworkcore.analyzers/8.0.18/microsoft.entityframeworkcore.analyzers.8.0.18.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.caching.abstractions/8.0.0/microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.caching.memory/8.0.1/microsoft.extensions.caching.memory.8.0.1.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.dependencyinjection/8.0.1/microsoft.extensions.dependencyinjection.8.0.1.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.logging/8.0.1/microsoft.extensions.logging.8.0.1.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.2/microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.options/8.0.2/microsoft.extensions.options.8.0.2.nupkg.sha512",
+    "/home/malechus/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
