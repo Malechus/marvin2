@@ -9,7 +9,6 @@ namespace marvin2.Models
 {
     public class WeeklyChore : Chore
     {
-        public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
-        public DayOfWeek? Day { get; set; }
+        public string DayOfWeek{ get; set; }
     }
 }
