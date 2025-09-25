@@ -44,3 +44,39 @@ h4.main-header {
   background-color: #020208;
   color: dimgray;
 }
+
+.text {
+  text-align: center;
+}
+
+.status-container{
+  max-height: 200px;
+}
+
+.col-4.status-container{
+  border-style: inset;
+}
+
+.col-4.link-container{
+  border-style: inset;
+}
+
+.dashboard-grid-box{
+  display: contents;
+}
+
+.dashboard-grid-item{
+  margin: 1px;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  height: 195px;
+  text-align: center;
+}
+
+.link-container.dashboard-grid-item{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 195px;
+}

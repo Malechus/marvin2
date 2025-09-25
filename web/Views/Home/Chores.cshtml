@@ -1,0 +1,64 @@
+@model marvin2.Models.WebModels.ChoreViewModel
+
+@{
+    ViewData["Title"] = "Chore Dashboard";
+}
+
+<div class="view-body">
+    <form asp-action="Chores" method="post">
+        <div class="form-group">
+            <label for="ChoreType">Chore Type</label>
+            <select asp-for="ChoreTypes" asp-items="Model.ChoreTypes" class="form-control" id="ChoreType"></select>
+        </div>
+
+        <div id="dailyChoreFields" style="display:none;">
+            <h4>Daily Chore</h4>
+            <input asp-for="DailyChore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="DailyChore.Description" class="form-control" placeholder="Description" />
+        </div>
+
+        <div id="weeklyChoreFields" style="display:none;">
+            <h4>Weekly Chore</h4>
+            <input asp-for="WeeklyChore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="WeeklyChore.Description" class="form-control" placeholder="Description" />
+        </div>
+
+        <div id="monthlyChoreFields" style="display:none;">
+            <h4>Monthly Chore</h4>
+            <input asp-for="MonthlyChore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="MonthlyChore.Description" class="form-control" placeholder="Description" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const choreTypeSelect = document.getElementById('ChoreType');
+        const dailyFields = document.getElementById('dailyChoreFields');
+        const weeklyFields = document.getElementById('weeklyChoreFields');
+        const monthlyFields = document.getElementById('monthlyChoreFields');
+
+        function updateFields() {
+            dailyFields.style.display = 'none';
+            weeklyFields.style.display = 'none';
+            monthlyFields.style.display = 'none';
+
+            switch (choreTypeSelect.value) {
+                case 'dailychore':
+                    dailyFields.style.display = '';
+                    break;
+                case 'weeklychore':
+                    weeklyFields.style.display = '';
+                    break;
+                case 'monthlychore':
+                    monthlyFields.style.display = '';
+                    break;
+            }
+        }
+
+        choreTypeSelect.addEventListener('change', updateFields);
+        updateFields();
+    </script>
+}

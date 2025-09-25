@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "coreclr",
+        "request": "launch",
+        "name": "Launch Discord Bot",
+        "program": "${workspaceFolder}/discord/bin/Debug/net8.0/${input:executableName}.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/discord",
+        "preLaunchTask": "build-discord"
+      },
+      {
+        "type": "coreclr",
+        "request": "launch",
+        "name": "Launch Web App",
+        "program": "${workspaceFolder}/web/bin/Debug/net8.0/${input:executableName}.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/web",
+        "preLaunchTask": "build-web"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "executableName",
+        "type": "promptString",
+        "description": "Enter the name of the output DLL (without extension, e.g. 'discord' or 'web')"
+      }
+    ]
+  }

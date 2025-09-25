@@ -8,7 +8,76 @@
             <h4 class="main-header">HOFAC Dashboard</h4>
         </div>
     </div>
-    <div class="container row">
-        
+    <div class="container row main-header">
+        <h5 class="main-header text-center">Status</h5>
+    </div>
+    <div class="container row status-container">
+        <div class="dashboard-grid-box">
+            <div class="container col-4 status-container">
+                <div class="dashboard-grid-item">
+                    <div class="pi-status">
+                        @if(ViewBag.Blocking){
+                            <p style="color: green;">Pi-Hole is up and blocking.</p>
+                        }
+                        @if(!ViewBag.Blocking){
+                            <p style="color: red;">Pi-Hole is down or not blocking.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-grid-box">
+            <div class="container col-4 status-container">
+                <div class="dashboard-grid-item">
+                    <p><b>Top Clients</b></p>
+                    @foreach(marvin2.Models.PiModels.QueryClient client in ViewBag.TopClients){
+                        <div class="client-box">
+                            <p>@client.name</p>
+                            <p>@client.ip</p>
+                            <p>@client.count</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-grid-box">
+            <div class="container col-4 status-container">            
+                <div class="dashboard-grid-item">
+                    <p><b>Top Blocked Clients</b></p>
+                    @foreach(marvin2.Models.PiModels.QueryClient client1 in ViewBag.TopBlocked){
+                        <div class="client-box">
+                            <p>@client1.name</p>
+                            <p>@client1.ip</p>
+                            <p>@client1.count</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container row link-container">
+        <div class="dashboard-grid-box">
+            <div class="container col-4 link-container">
+                <div class="dashboard-grid-item">
+                    <a href="https://192.168.1.2/admin/" target="_blank"><img src="pihole.svg" style="width: 120px; height: 120px"/></a>
+                    <p>Pi Hole Dashboard</p>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-grid-box">
+            <div class="container col-4 link-container">
+                <div class="dashboard-grid-item">
+                    <a asp-area="" asp-controller="Home" asp-action="Chores"><img src="chore_logo2.png" style="width: 120px; height: 120px;" /></a>
+                    <p>Chore Management</p>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-grid-box">
+            <div class="container col-4 link-container">
+                <div class="dashboard-grid-item">
+                    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
