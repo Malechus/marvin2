@@ -21,7 +21,7 @@ namespace marvin2.discord.Services
             _commands = commandService;
             _provider = serviceProvider;
 
-            _client.MessageReceived += OnMessageReceivedAsync;
+            //_client.MessageReceived += OnMessageReceivedAsync;
         }
         
         private async Task OnMessageReceivedAsync(SocketMessage s)

@@ -10,9 +10,9 @@ namespace marvin2.Modules
     public class ChoreModule : ModuleBase<SocketCommandContext>
     {
         private readonly IServiceProvider _provider;
-        private readonly IChoreService _choreService;
+        private readonly ChoreService _choreService;
         
-        public ChoreModule(IServiceProvider serviceProvider, IChoreService choreService)
+        public ChoreModule(IServiceProvider serviceProvider, ChoreService choreService)
         {
             _provider = serviceProvider;
             _choreService = choreService;

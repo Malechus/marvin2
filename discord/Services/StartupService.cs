@@ -3,6 +3,8 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using marvin2.discord.SlashCommands;
+using marvin2.Services;
 
 namespace marvin2.discord.Services
 {
@@ -12,22 +14,29 @@ namespace marvin2.discord.Services
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IConfigurationRoot _config;
+        private readonly ChoreService _choreservice;
+        private readonly ListChores _listChores;
         
         public StartupService(
             IServiceProvider serviceProvider,
             DiscordSocketClient discordSocketClient,
             CommandService commandService,
-            IConfigurationRoot configurationRoot
+            IConfigurationRoot configurationRoot,
+            ChoreService choreService
         )
         {
             _provider = serviceProvider;
             _client = discordSocketClient;
             _commands = commandService;
             _config = configurationRoot;
+            _choreservice = choreService;
+            _listChores = new ListChores(_choreservice);
         }
         
         public async Task StartConnectionAsync()
         {
+            _client.SlashCommandExecuted += SlashCommand_Executed;
+            _client.Ready += Client_Ready;
             _client.Ready += Announce;
 
             await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
@@ -42,6 +51,27 @@ namespace marvin2.discord.Services
 
             await channel.SendMessageAsync("I'm awake.");
             //TODO add self test
+        }
+        
+        public async Task Client_Ready()
+        {
+            SocketGuild server = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
+            
+            SlashCommandBuilder listBuilder = _listChores.CreateBuilder();
+            server.CreateApplicationCommandAsync(listBuilder.Build());
+        }
+
+        public async Task SlashCommand_Executed(SocketSlashCommand command)
+        {
+            switch(command.Data.Name)
+            {
+                case "listchores":
+                    _listChores.HandleCommand(command);
+                    break;
+                default:
+                    command.RespondAsync("Command unrecognized, try again.");
+                    break;
+            }
         }
     }
 }

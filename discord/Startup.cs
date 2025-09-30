@@ -65,6 +65,7 @@ namespace marvin2
                 DefaultRunMode = RunMode.Async
             }))
             .AddSingleton<CommandHandler>()
+            .AddSingleton<ChoreService, ChoreService>()
             .AddSingleton<StartupService>()
             .AddSingleton<LoggerService>()
             .AddSingleton<Random>();

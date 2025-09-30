@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace marvin2.Services
 {
-    public class ChoreService : IChoreService
+    public class ChoreService
     {
         private readonly ChoreContext _context;
         private readonly IConfigurationRoot _config;
@@ -18,7 +18,7 @@ namespace marvin2.Services
         {
             _config = configurationRoot;
             DbContextOptionsBuilder<ChoreContext> builder = new DbContextOptionsBuilder<ChoreContext>();
-            builder.UseMySql(_config["Database:ConnectionString"], ServerVersion.AutoDetect(_config["Database:DbConnectionStringBuilder"]));
+            builder.UseMySql(_config["Database:ConnectionString"], ServerVersion.AutoDetect(_config["Database:ConnectionString"]));
             _context = new ChoreContext(builder.Options);
         }
         
@@ -44,20 +44,20 @@ namespace marvin2.Services
         private List<WeeklyChore> getWeeklyChores(string dayOfWeek)
         {
             List<WeeklyChore> weeklyChores = _context.WeeklyChores
-                .Where(wc => wc.DayOfWeek.ToLower() == dayOfWeek.ToLower())
+                .Where(c => c.DayOfWeek.ToLower() == dayOfWeek.ToLower())
                 .ToList();
 
             return weeklyChores;
         }
         
-        public List<MonthlyChore> GetMonthlyChores(int dayOfMonth)
+        public List<MonthlyChore>? GetMonthlyChores(int dayOfMonth)
         {
-            return GetMonthlyChores(dayOfMonth);
+            return getMonthlyChores(dayOfMonth);
         }
         
-        private List<MonthlyChore> getMonthlyChores(int dayOfMonth)
+        private List<MonthlyChore>? getMonthlyChores(int dayOfMonth)
         {
-            List<MonthlyChore> monthlyChores = _context.MonthlyChores
+            List<MonthlyChore>? monthlyChores = _context.MonthlyChores
                 .Where(mc => mc.DayOfMonth == dayOfMonth)
                 .ToList();
 

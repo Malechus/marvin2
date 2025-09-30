@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "aF+S+Efowuo=",
+  "dgSpecHash": "J1oQbPynKUo=",
   "success": true,
   "projectFilePath": "/home/malechus/source/repos/marvin2/data/data.csproj",
   "expectedPackageFiles": [
@@ -121,9 +121,7 @@
     "/home/malechus/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512",
     "/home/malechus/.nuget/packages/system.threading.tasks.extensions/4.6.0/system.threading.tasks.extensions.4.6.0.nupkg.sha512",
     "/home/malechus/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
-    "/home/malechus/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
-    "/home/malechus/.nuget/packages/microsoft.netcore.app.ref/8.0.20/microsoft.netcore.app.ref.8.0.20.nupkg.sha512",
-    "/home/malechus/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.20/microsoft.aspnetcore.app.ref.8.0.20.nupkg.sha512"
+    "/home/malechus/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512"
   ],
   "logs": []
 }
