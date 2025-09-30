@@ -74,5 +74,19 @@ namespace marvin2.Services
             List<Person> people = _context.People.ToList();
             return people;
         }
+        
+        public Person? GetPerson(string name)
+        {
+            return getPerson(name);
+        }
+        
+        private Person? getPerson(string name)
+        {
+            Person? person = _context.People
+                .Where(p => p.Name.ToLower() == name.ToLower())
+                .FirstOrDefault();
+
+            return person;
+        }
     }
 }
