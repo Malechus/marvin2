@@ -28,6 +28,7 @@ namespace marvin2.Models
         public DbSet<DailyChore> DailyChores { get; set; }
         public DbSet<MonthlyChore> MonthlyChores { get; set; }
         public DbSet<Person> People { get; set; }
+        public DbSet<PersonChore> PersonChores{ get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -49,13 +50,13 @@ namespace marvin2.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WeeklyChore>().HasBaseType<Chore>();
+            modelBuilder.Entity<WeeklyChore>().HasBaseType<PersonChore>();
             
-            modelBuilder.Entity<DailyChore>().HasBaseType<Chore>();
+            modelBuilder.Entity<DailyChore>().HasBaseType<PersonChore>();
             
-            modelBuilder.Entity<MonthlyChore>().HasBaseType<Chore>();
+            modelBuilder.Entity<MonthlyChore>().HasBaseType<PersonChore>();
 
-            modelBuilder.Entity<Chore>().UseTphMappingStrategy();
+            modelBuilder.Entity<PersonChore>().UseTphMappingStrategy();
         }
     }
 }

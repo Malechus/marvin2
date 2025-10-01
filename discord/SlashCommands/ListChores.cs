@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using marvin2.Models;
 using marvin2.Services;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace marvin2.discord.SlashCommands
 {
@@ -54,33 +55,41 @@ namespace marvin2.discord.SlashCommands
             string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
             int dayOfMonth = DateTime.Today.Day;
 
-            List<DailyChore> dailyChores = _choreService.GetDailyChores();
-            List<WeeklyChore> weeklyChores = _choreService.GetWeeklyChores(dayOfWeek);
-            List<MonthlyChore> monthlyChores = _choreService.GetMonthlyChores(dayOfMonth);
-
             List<Person> people = _choreService.GetPeople();
             
             foreach(Person person in people)
             {
+                List<PersonChore> personChores = _choreService.GetPersonChores(person);
+
                 List<Chore> chores = new List<Chore>();
                 
-                foreach(DailyChore dailyChore in dailyChores)
+                foreach(PersonChore personChore in personChores)
                 {
-                    if(dailyChore.Person == person){ chores.Add(dailyChore); }
-                }
-                
-                foreach(WeeklyChore weeklyChore in weeklyChores)
-                {
-                    if(weeklyChore.Person == person){ chores.Add(weeklyChore); }
-                }
-                
-                foreach(MonthlyChore monthlyChore in monthlyChores)
-                {
-                    if(monthlyChore.Person == person){ chores.Add(monthlyChore); }
+                    switch(personChore.GetType().Name)
+                    {
+                        case nameof(DailyChore):
+                            chores.Add(personChore.Chore);
+                            break;
+                        case nameof(WeeklyChore):
+                            WeeklyChore weeklyChore = personChore as WeeklyChore;
+                            if (weeklyChore.DayOfWeek == dayOfWeek) chores.Add(personChore.Chore);
+                            break;
+                        case nameof(MonthlyChore):
+                            MonthlyChore monthlyChore = personChore as MonthlyChore;
+                            if (monthlyChore.DayOfMonth == dayOfMonth) chores.Add(personChore.Chore);
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
-                stringBuilder.AppendLine(person.Name + @"'s chores for today are:");
-                foreach(Chore chore in chores){ stringBuilder.AppendLine(chore.Name); }
+                stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for today are:");
+                foreach(Chore chore in chores)
+                { 
+                    stringBuilder.AppendLine(chore.Name);
+                    stringBuilder.AppendLine(@"-# " + chore.Description);
+                }
+                stringBuilder.AppendLine();
             }
 
             command.RespondAsync(stringBuilder.ToString());
@@ -98,30 +107,39 @@ namespace marvin2.discord.SlashCommands
             
             string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
             int dayOfMonth = DateTime.Today.Day;
-
-            List<DailyChore> dailyChores = _choreService.GetDailyChores();
-            List<WeeklyChore> weeklyChores = _choreService.GetWeeklyChores(dayOfWeek);
-            List<MonthlyChore> monthlyChores = _choreService.GetMonthlyChores(dayOfMonth);
             
+            List<PersonChore> personChores = _choreService.GetPersonChores(person);
+
             List<Chore> chores = new List<Chore>();
-                
-            foreach(DailyChore dailyChore in dailyChores)
-            {
-                if(dailyChore.Person == person){ chores.Add(dailyChore); }
-            }
             
-            foreach(WeeklyChore weeklyChore in weeklyChores)
+            foreach(PersonChore personChore in personChores)
             {
-                if(weeklyChore.Person == person){ chores.Add(weeklyChore); }
-            }
-            
-            foreach(MonthlyChore monthlyChore in monthlyChores)
-            {
-                if(monthlyChore.Person == person){ chores.Add(monthlyChore); }
+                switch(personChore.GetType().Name)
+                {
+                    case nameof(DailyChore):
+                        chores.Add(personChore.Chore);
+                        break;
+                    case nameof(WeeklyChore):
+                        WeeklyChore weeklyChore = personChore as WeeklyChore;
+                        if (weeklyChore.DayOfWeek == dayOfWeek) chores.Add(personChore.Chore);
+                        break;
+                    case nameof(MonthlyChore):
+                        MonthlyChore monthlyChore = personChore as MonthlyChore;
+                        if (monthlyChore.DayOfMonth == dayOfMonth) chores.Add(personChore.Chore);
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            stringBuilder.AppendLine(person.Name + @"'s chores for today are:");
-            foreach(Chore chore in chores){ stringBuilder.AppendLine(chore.Name); }
+            stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for today are:");
+            stringBuilder.AppendLine();
+            foreach(Chore chore in chores)
+            { 
+                stringBuilder.AppendLine(chore.Name);
+                stringBuilder.AppendLine(@"-# " + chore.Description);
+            }
+            stringBuilder.AppendLine();
             
             command.RespondAsync(stringBuilder.ToString());
         }

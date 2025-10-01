@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace marvin2.Models
 {
-    public class WeeklyChore : Chore
+    public class WeeklyChore : PersonChore
     {
         public string DayOfWeek{ get; set; }
     }
