@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using marvin2.Models;
 
@@ -11,9 +12,11 @@ using marvin2.Models;
 namespace data.Migrations
 {
     [DbContext(typeof(ChoreContext))]
-    partial class ChoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250930193055_linking-table")]
+    partial class linkingtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +36,11 @@ namespace data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("varchar(13)");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -42,6 +50,10 @@ namespace data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Chore");
+
+                    b.HasDiscriminator().HasValue("Chore");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("marvin2.Models.Person", b =>
@@ -72,11 +84,6 @@ namespace data.Migrations
                     b.Property<int?>("ChoreId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("varchar(13)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
@@ -90,15 +97,11 @@ namespace data.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("PersonChores");
-
-                    b.HasDiscriminator().HasValue("PersonChore");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("marvin2.Models.DailyChore", b =>
                 {
-                    b.HasBaseType("marvin2.Models.PersonChore");
+                    b.HasBaseType("marvin2.Models.Chore");
 
                     b.Property<int>("priority")
                         .HasColumnType("int");
@@ -108,7 +111,7 @@ namespace data.Migrations
 
             modelBuilder.Entity("marvin2.Models.MonthlyChore", b =>
                 {
-                    b.HasBaseType("marvin2.Models.PersonChore");
+                    b.HasBaseType("marvin2.Models.Chore");
 
                     b.Property<int?>("Day")
                         .HasColumnType("int");
@@ -124,7 +127,7 @@ namespace data.Migrations
 
             modelBuilder.Entity("marvin2.Models.WeeklyChore", b =>
                 {
-                    b.HasBaseType("marvin2.Models.PersonChore");
+                    b.HasBaseType("marvin2.Models.Chore");
 
                     b.Property<string>("DayOfWeek")
                         .IsRequired()

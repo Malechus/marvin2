@@ -30,7 +30,6 @@ namespace marvin2.Services
         private List<DailyChore> getDailyChores()
         {
             List<DailyChore> dailyChores = _context.DailyChores
-                .Where(dc => dc.IsActive == true)
                 .ToList();
 
             return dailyChores;
@@ -87,6 +86,22 @@ namespace marvin2.Services
                 .FirstOrDefault();
 
             return person;
+        }
+        
+        public List<PersonChore> GetPersonChores(Person person)
+        {
+            return getPersonChores(person);
+        }
+        
+        private List<PersonChore> getPersonChores(Person person)
+        {
+            List<PersonChore> list = _context.PersonChores
+                .Include(pc => pc.Chore)
+                .Include(pc => pc.Person)
+                .Where(c => c.Person.Id == person.Id)
+                .ToList();
+
+            return list;
         }
     }
 }
