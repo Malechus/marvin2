@@ -3,19 +3,23 @@
 using System.Text;
 using Discord;
 using Discord.WebSocket;
+using marvin2.discord.Services;
 using marvin2.Models;
 using marvin2.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Identity.Client;
 
 namespace marvin2.discord.SlashCommands
 {
     public class ListChores
     {
         private readonly ChoreService _choreService;
+        private readonly ResponseService _responseService;
         
-        public ListChores(ChoreService choreService)
+        public ListChores(ChoreService choreService, ResponseService responseService)
         {
             _choreService = choreService;
+            _responseService = responseService;
         }
         
         public SlashCommandBuilder CreateBuilder()
@@ -43,14 +47,14 @@ namespace marvin2.discord.SlashCommands
         
         public async Task HandleCommand(SocketSlashCommand command)
         {
+            await command.RespondAsync(_responseService.GetRandomResponse());
             if (command.Data.Options.Count == 0) listAllChores(command);
             else listChores(command);
         }
         
         private async Task listAllChores(SocketSlashCommand command)
         {
-
-            StringBuilder stringBuilder = new StringBuilder();
+            ISocketMessageChannel channel = command.Channel;
             
             string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
             int dayOfMonth = DateTime.Today.Day;
@@ -59,6 +63,9 @@ namespace marvin2.discord.SlashCommands
             
             foreach(Person person in people)
             {
+
+                StringBuilder stringBuilder = new StringBuilder();
+                
                 List<PersonChore> personChores = _choreService.GetPersonChores(person);
 
                 List<Chore> chores = new List<Chore>();
@@ -90,13 +97,15 @@ namespace marvin2.discord.SlashCommands
                     stringBuilder.AppendLine(@"-# " + chore.Description);
                 }
                 stringBuilder.AppendLine();
-            }
 
-            command.RespondAsync(stringBuilder.ToString());
+                await channel.SendMessageAsync(stringBuilder.ToString());
+            }
         }
         
         private async Task listChores(SocketSlashCommand command)
         {
+            ISocketMessageChannel channel = command.Channel;
+        
             string name = command.Data.Options.First().Value.ToString();
 
             Person? person = _choreService.GetPerson(name);
@@ -141,7 +150,7 @@ namespace marvin2.discord.SlashCommands
             }
             stringBuilder.AppendLine();
             
-            command.RespondAsync(stringBuilder.ToString());
+            channel.SendMessageAsync(stringBuilder.ToString());
         }
     }
 }

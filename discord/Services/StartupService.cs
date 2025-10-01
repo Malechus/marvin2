@@ -15,6 +15,7 @@ namespace marvin2.discord.Services
         private readonly CommandService _commands;
         private readonly IConfigurationRoot _config;
         private readonly ChoreService _choreservice;
+        private readonly ResponseService _responseservice;
         private readonly ListChores _listChores;
         
         public StartupService(
@@ -22,7 +23,8 @@ namespace marvin2.discord.Services
             DiscordSocketClient discordSocketClient,
             CommandService commandService,
             IConfigurationRoot configurationRoot,
-            ChoreService choreService
+            ChoreService choreService,
+            ResponseService responseService
         )
         {
             _provider = serviceProvider;
@@ -30,7 +32,8 @@ namespace marvin2.discord.Services
             _commands = commandService;
             _config = configurationRoot;
             _choreservice = choreService;
-            _listChores = new ListChores(_choreservice);
+            _responseservice = responseService;
+            _listChores = new ListChores(_choreservice, _responseservice);
         }
         
         public async Task StartConnectionAsync()
@@ -49,7 +52,7 @@ namespace marvin2.discord.Services
         {
             ISocketMessageChannel channel = await _client.GetChannelAsync(ulong.Parse(_config["Discord:Channels:Announce"])) as ISocketMessageChannel;
 
-            await channel.SendMessageAsync("I'm awake.");
+            await channel.SendMessageAsync(_responseservice.GetRandomGreeting());
             //TODO add self test
         }
         

@@ -66,9 +66,10 @@ namespace marvin2
             }))
             .AddSingleton<CommandHandler>()
             .AddSingleton<ChoreService, ChoreService>()
-            .AddSingleton<StartupService>()
             .AddSingleton<LoggerService>()
-            .AddSingleton<Random>();
+            .AddSingleton<Random>()
+            .AddSingleton<ResponseService>()            
+            .AddSingleton<StartupService>();
         }
     }
 }
