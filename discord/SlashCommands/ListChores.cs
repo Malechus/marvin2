@@ -45,17 +45,15 @@ namespace marvin2.discord.SlashCommands
             return builder;
         }
         
-        public async Task HandleCommand(SocketSlashCommand command)
+        public async Task HandleCommand(SocketSlashCommand command, SocketTextChannel responseChannel)
         {
             await command.RespondAsync(_responseService.GetRandomResponse());
-            if (command.Data.Options.Count == 0) listAllChores(command);
+            if (command.Data.Options.Count == 0) listAllChores(command, responseChannel);
             else listChores(command);
         }
         
-        private async Task listAllChores(SocketSlashCommand command)
+        private async Task listAllChores(SocketSlashCommand command, SocketTextChannel responseChannel)
         {
-            ISocketMessageChannel channel = command.Channel;
-            
             string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
             int dayOfMonth = DateTime.Today.Day;
 
@@ -98,7 +96,7 @@ namespace marvin2.discord.SlashCommands
                 }
                 stringBuilder.AppendLine();
 
-                await channel.SendMessageAsync(stringBuilder.ToString());
+                await responseChannel.SendMessageAsync(stringBuilder.ToString());
             }
         }
         
