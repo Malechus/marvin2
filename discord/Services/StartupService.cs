@@ -69,7 +69,9 @@ namespace marvin2.discord.Services
             switch(command.Data.Name)
             {
                 case "listchores":
-                    _listChores.HandleCommand(command);
+                    SocketGuild guild = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
+                    SocketTextChannel responseChannel = (SocketTextChannel)guild.GetChannel(ulong.Parse(_config["Discord:Channels:Chore_List"]));
+                    _listChores.HandleCommand(command, responseChannel);
                     break;
                 default:
                     command.RespondAsync("Command unrecognized, try again.");
