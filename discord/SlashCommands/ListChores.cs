@@ -88,7 +88,7 @@ namespace marvin2.discord.SlashCommands
                     }
                 }
 
-                stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for today are:");
+                stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for " + dayOfWeek + " are:");
                 foreach(Chore chore in chores)
                 { 
                     stringBuilder.AppendLine(chore.Name);
@@ -139,7 +139,7 @@ namespace marvin2.discord.SlashCommands
                 }
             }
 
-            stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for today are:");
+            stringBuilder.AppendLine(@"## " + person.Name + @"'s chores for " + dayOfWeek + " are:");
             stringBuilder.AppendLine();
             foreach(Chore chore in chores)
             { 
