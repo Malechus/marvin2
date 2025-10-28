@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using marvin2.discord.SlashCommands;
 using marvin2.Services;
+using System.Timers;
 
 namespace marvin2.discord.Services
 {
@@ -22,6 +23,7 @@ namespace marvin2.discord.Services
         private readonly ChoreService _choreservice;
         private readonly ResponseService _responseService;
         private readonly ListChores _listChores;
+        private System.Timers.Timer _timer;
         
         /// <summary>
         /// Constructs a new instance of <see cref="StartupService"/>.
@@ -58,6 +60,7 @@ namespace marvin2.discord.Services
         {
             _client.SlashCommandExecuted += SlashCommand_Executed;
             _client.Ready += Client_Ready;
+            _client.Ready += Timer_Start;
             _client.Ready += Announce;
 
             await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
@@ -96,7 +99,7 @@ namespace marvin2.discord.Services
         /// then dispatches longer-running operations (like listing chores) to background handlers.
         /// </summary>
         /// <param name="command">The slash command that was executed.</param>
-        public async Task SlashCommand_Executed(SocketSlashCommand command)
+        private async Task SlashCommand_Executed(SocketSlashCommand command)
         {
             //Immediately respond to command here with a random, pregenerated response.
             //"Respnses" later will use the SocketTextChannel to PostAsync instead of "Responding"
@@ -116,6 +119,29 @@ namespace marvin2.discord.Services
                     command.RespondAsync("Command unrecognized, try again.");
                     break;
             }
+        }
+        
+        private async Task Timer_Start()
+        {
+            DateTime now = DateTime.Now;
+            DateTime executeTime = new DateTime(now.Year, now.Month, now.Day, 6, 0, 0);
+
+            if (now.CompareTo(executeTime) > 0) executeTime = executeTime.AddDays(1);
+
+            double ticks = (executeTime - now).TotalMilliseconds;
+            _timer = new System.Timers.Timer(ticks);
+            _timer.Elapsed += Timer_Elapsed;
+            _timer.Start();
+        }
+        
+        private void Timer_Elapsed(object Sender, ElapsedEventArgs e)
+        {
+            _timer.Stop();
+            SocketGuild guild = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
+            SocketTextChannel responseChannel = (SocketTextChannel)guild.GetChannel(ulong.Parse(_config["Discord:Channels:Chore_List"]));
+            _listChores.TriggerResponse(responseChannel);
+            Thread.Sleep(120000);
+            Timer_Start();
         }
     }
 }

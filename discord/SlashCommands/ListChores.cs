@@ -63,8 +63,13 @@ namespace marvin2.discord.SlashCommands
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task HandleCommand(SocketSlashCommand command, SocketTextChannel responseChannel)
         {
-            if (command.Data.Options.Count == 0) listAllChores(command, responseChannel);
+            if (command.Data.Options.Count == 0) listAllChores(responseChannel);
             else listChores(command);
+        }
+        
+        public async Task TriggerResponse(SocketTextChannel responseChannel)
+        {
+            listAllChores(responseChannel);
         }
         
         /// <summary>
@@ -74,10 +79,9 @@ namespace marvin2.discord.SlashCommands
         /// This method queries the current day (day of week and day of month), retrieves people,
         /// and then builds and sends a message for each person's chores scheduled for today.
         /// </remarks>
-        /// <param name="command">The invoking slash command (not used for single-person listing).</param>
         /// <param name="responseChannel">Channel where per-person chore lists are posted.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task listAllChores(SocketSlashCommand command, SocketTextChannel responseChannel)
+        private async Task listAllChores(SocketTextChannel responseChannel)
         {
             string dayOfWeek = DateTime.Today.DayOfWeek.ToString();
             int dayOfMonth = DateTime.Today.Day;
