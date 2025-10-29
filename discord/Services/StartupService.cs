@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using marvin2.discord.SlashCommands;
 using marvin2.Services;
 using System.Timers;
+using data.Services;
+using System.Net.Sockets;
 
 namespace marvin2.discord.Services
 {
@@ -22,7 +24,9 @@ namespace marvin2.discord.Services
         private readonly IConfigurationRoot _config;
         private readonly ChoreService _choreservice;
         private readonly ResponseService _responseService;
-        private readonly ListChores _listChores;
+        private readonly PiService _piService;
+        private readonly ISlashCommandHandler _listChores;
+        private readonly ISlashCommandHandler _statusHandler;
         private System.Timers.Timer _timer;
         
         /// <summary>
@@ -40,7 +44,8 @@ namespace marvin2.discord.Services
             CommandService commandService,
             IConfigurationRoot configurationRoot,
             ChoreService choreService,
-            ResponseService responseService
+            ResponseService responseService,
+            PiService piService
         )
         {
             _provider = serviceProvider;
@@ -49,7 +54,9 @@ namespace marvin2.discord.Services
             _config = configurationRoot;
             _choreservice = choreService;
             _responseService = responseService;
+            _piService = piService;
             _listChores = new ListChores(_choreservice, _responseService);
+            _statusHandler = new Status(_piService);
         }
         
         /// <summary>
@@ -90,7 +97,9 @@ namespace marvin2.discord.Services
             SocketGuild server = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
             
             SlashCommandBuilder listBuilder = _listChores.CreateBuilder();
+            SlashCommandBuilder statusBuilder = _statusHandler.CreateBuilder();
             server.CreateApplicationCommandAsync(listBuilder.Build());
+            server.CreateApplicationCommandAsync(statusBuilder.Build());
         }
 
         /// <summary>
@@ -108,12 +117,17 @@ namespace marvin2.discord.Services
             //Some use cases for this bot include printing lists of data to specific read only channels, which is why bypassing this rule is elected here
             await command.RespondAsync(_responseService.GetRandomResponse());
             
+            SocketGuild guild = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
+            SocketTextChannel responseChannel = (SocketTextChannel)command.Channel;
+            
             switch(command.Data.Name)
             {
                 case "listchores":
-                    SocketGuild guild = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
-                    SocketTextChannel responseChannel = (SocketTextChannel)guild.GetChannel(ulong.Parse(_config["Discord:Channels:Chore_List"]));
+                    responseChannel = (SocketTextChannel)guild.GetChannel(ulong.Parse(_config["Discord:Channels:Chore_List"]));
                     _listChores.HandleCommand(command, responseChannel);
+                    break;
+                case "status":
+                    _statusHandler.HandleCommand(command, responseChannel);
                     break;
                 default:
                     command.RespondAsync("Command unrecognized, try again.");

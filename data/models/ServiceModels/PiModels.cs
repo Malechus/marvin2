@@ -29,21 +29,6 @@ namespace marvin2.Models.PiModels
         public string name{ get; set; }
         public int count{ get; set; }
     }
-    
-    public class QuerySorter : IComparer<QueryClient>
-    {
-        public int Compare(QueryClient x, QueryClient y)
-        {
-            if (x.count == 0 || y.count == 0)
-            {
-                return 0;
-            }
-            
-            // CompareTo() method
-            return x.count.CompareTo(y.count);
-            
-        }
-    }
 
     public class PiError
     {

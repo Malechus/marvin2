@@ -12,7 +12,7 @@ namespace marvin2.discord.SlashCommands
     /// <summary>
     /// Builds and handles the "listchores" slash command which lists chores for family members.
     /// </summary>
-    public class ListChores
+    public class ListChores : ISlashCommandHandler
     {
         private readonly ChoreService _choreService;
         private readonly ResponseService _responseService;

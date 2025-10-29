@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using marvin2.discord.Services;
+using data.Services;
 
 namespace marvin2
 {
@@ -92,6 +93,7 @@ namespace marvin2
             }))
             .AddSingleton<CommandHandler>()
             .AddSingleton<ChoreService, ChoreService>()
+            .AddSingleton<PiService, PiService>()
             .AddSingleton<LoggerService>()
             .AddSingleton<Random>()
             .AddSingleton<ResponseService>()            

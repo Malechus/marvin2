@@ -10,7 +10,7 @@ using System.Text;
 
 namespace data.Services
 {
-    public class PiService : IPiService
+    public class PiService
     {
         private readonly IConfigurationRoot _config;
         private static HttpClientHandler _handler = new HttpClientHandler()
@@ -99,10 +99,7 @@ namespace data.Services
 
             if (result is null) throw new Exception("API query failed.");
 
-            List<QueryClient> queryClients = result.clients.ToList();
-            
-            QuerySorter sorter = new QuerySorter();
-            queryClients.Sort(sorter);
+            List<QueryClient> queryClients = result.clients.ToList().OrderByDescending(c => c.count).ToList();
 
             return queryClients;
         }       
