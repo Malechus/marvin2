@@ -17,10 +17,10 @@ public class HomeController : Controller
 {
     private readonly IConfigurationRoot _config;
     private readonly ILogger<HomeController> _logger;
-    private readonly IPiService _piService;
+    private readonly PiService _piService;
     private readonly ChoreContext _context;
 
-    public HomeController(ILogger<HomeController> logger, IConfigurationRoot configurationRoot, IPiService piService)
+    public HomeController(ILogger<HomeController> logger, IConfigurationRoot configurationRoot, PiService piService)
     {
         _logger = logger;
         _config = configurationRoot;
@@ -36,6 +36,42 @@ public class HomeController : Controller
         ViewBag.Blocking = _piService.IsBlocking();
         ViewBag.TopClients = _piService.GetTopClients();
         ViewBag.TopBlocked = _piService.GetTopBlockedClients();
+        
+        // Get today's chores
+        List<PersonChore> todaysChores = new List<PersonChore>();
+        try
+        {
+            string todayName = DateTime.Now.DayOfWeek.ToString();
+            int todayDate = DateTime.Now.Day;
+            
+            var dailyChores = _context.DailyChores
+                .Include(pc => pc.Person)
+                .Include(pc => pc.Chore)
+                .Where(dc => dc.IsActive)
+                .ToList();
+            
+            var weeklyChores = _context.WeeklyChores
+                .Include(pc => pc.Person)
+                .Include(pc => pc.Chore)
+                .Where(wc => wc.IsActive && wc.DayOfWeek.ToLower() == todayName.ToLower())
+                .ToList();
+            
+            var monthlyChores = _context.MonthlyChores
+                .Include(pc => pc.Person)
+                .Include(pc => pc.Chore)
+                .Where(mc => mc.IsActive && mc.DayOfMonth == todayDate)
+                .ToList();
+            
+            todaysChores.AddRange(dailyChores);
+            todaysChores.AddRange(weeklyChores);
+            todaysChores.AddRange(monthlyChores);
+        }
+        catch
+        {
+            // If chore retrieval fails, continue with empty list
+        }
+        
+        ViewBag.TodaysChores = todaysChores;
         return View();
     }
     

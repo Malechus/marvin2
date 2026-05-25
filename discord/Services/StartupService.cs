@@ -25,19 +25,26 @@ namespace marvin2.discord.Services
         private readonly ChoreService _choreservice;
         private readonly ResponseService _responseService;
         private readonly PiService _piService;
+        private readonly RaccoonGameScheduler _gameScheduler;
         private readonly ISlashCommandHandler _listChores;
         private readonly ISlashCommandHandler _statusHandler;
+        private readonly ISlashCommandHandler _huntHandler;
+        private readonly ISlashCommandHandler _shooHandler;
         private System.Timers.Timer _timer;
         
-        /// <summary>
-        /// Constructs a new instance of <see cref="StartupService"/>.
-        /// </summary>
-        /// <param name="serviceProvider">DI service provider used to resolve modules and services.</param>
-        /// <param name="discordSocketClient">Discord socket client used to interact with the gateway.</param>
-        /// <param name="commandService">Command service used to register text command modules.</param>
-        /// <param name="configurationRoot">Configuration root for reading settings like tokens and channel IDs.</param>
-        /// <param name="choreService">Application service for retrieving chore and person data.</param>
-        /// <param name="responseService">Service used to select and format bot responses.</param>
+         /// <summary>
+         /// Constructs a new instance of <see cref="StartupService"/>.
+         /// </summary>
+         /// <param name="serviceProvider">DI service provider used to resolve modules and services.</param>
+         /// <param name="discordSocketClient">Discord socket client used to interact with the gateway.</param>
+         /// <param name="commandService">Command service used to register text command modules.</param>
+         /// <param name="configurationRoot">Configuration root for reading settings like tokens and channel IDs.</param>
+         /// <param name="choreService">Application service for retrieving chore and person data.</param>
+         /// <param name="responseService">Service used to select and format bot responses.</param>
+         /// <param name="piService">Service for Pi-hole queries.</param>
+         /// <param name="gameService">Service for managing raccoon game state.</param>
+         /// <param name="scoreService">Service for incrementing player scores.</param>
+         /// <param name="gameScheduler">Service for scheduling and triggering raccoon games.</param>
         public StartupService(
             IServiceProvider serviceProvider,
             DiscordSocketClient discordSocketClient,
@@ -45,7 +52,10 @@ namespace marvin2.discord.Services
             IConfigurationRoot configurationRoot,
             ChoreService choreService,
             ResponseService responseService,
-            PiService piService
+            PiService piService,
+            RaccoonGameService gameService,
+            ScoreService scoreService,
+            RaccoonGameScheduler gameScheduler
         )
         {
             _provider = serviceProvider;
@@ -55,8 +65,11 @@ namespace marvin2.discord.Services
             _choreservice = choreService;
             _responseService = responseService;
             _piService = piService;
+            _gameScheduler = gameScheduler;
             _listChores = new ListChores(_choreservice, _responseService);
             _statusHandler = new Status(_piService);
+            _huntHandler = new HuntCommandHandler(gameService, choreService, scoreService);
+            _shooHandler = new ShooCommandHandler(gameService, choreService, scoreService, responseService);
         }
         
         /// <summary>
@@ -68,6 +81,7 @@ namespace marvin2.discord.Services
             _client.SlashCommandExecuted += SlashCommand_Executed;
             _client.Ready += Client_Ready;
             _client.Ready += Timer_Start;
+            _client.Ready += GameScheduler_Start;
             _client.Ready += Announce;
 
             await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
@@ -89,6 +103,15 @@ namespace marvin2.discord.Services
         }
         
         /// <summary>
+        /// Starts the raccoon game scheduler when the Discord client is ready.
+        /// </summary>
+        private async Task GameScheduler_Start()
+        {
+            _gameScheduler.StartAsync();
+            await Task.CompletedTask;
+        }
+        
+        /// <summary>
         /// Invoked when the Discord client signals it is ready.
         /// Registers or creates guild-level application commands such as the chore list command.
         /// </summary>
@@ -98,8 +121,12 @@ namespace marvin2.discord.Services
             
             SlashCommandBuilder listBuilder = _listChores.CreateBuilder();
             SlashCommandBuilder statusBuilder = _statusHandler.CreateBuilder();
+            SlashCommandBuilder huntBuilder = _huntHandler.CreateBuilder();
+            SlashCommandBuilder shooBuilder = _shooHandler.CreateBuilder();
             server.CreateApplicationCommandAsync(listBuilder.Build());
             server.CreateApplicationCommandAsync(statusBuilder.Build());
+            server.CreateApplicationCommandAsync(huntBuilder.Build());
+            server.CreateApplicationCommandAsync(shooBuilder.Build());
         }
 
         /// <summary>
@@ -128,6 +155,12 @@ namespace marvin2.discord.Services
                     break;
                 case "status":
                     _statusHandler.HandleCommand(command, responseChannel);
+                    break;
+                case "hunt":
+                    _huntHandler.HandleCommand(command, responseChannel);
+                    break;
+                case "shoo":
+                    _shooHandler.HandleCommand(command, responseChannel);
                     break;
                 default:
                     command.RespondAsync("Command unrecognized, try again.");

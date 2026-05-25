@@ -7,6 +7,7 @@ using marvin2.Services;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using marvin2.discord.Services;
 using data.Services;
 
@@ -80,6 +81,7 @@ namespace marvin2
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_config)
+            .AddLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug))
             .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose,
@@ -93,10 +95,13 @@ namespace marvin2
             }))
             .AddSingleton<CommandHandler>()
             .AddSingleton<ChoreService, ChoreService>()
+            .AddSingleton<ScoreService, ScoreService>()
             .AddSingleton<PiService, PiService>()
             .AddSingleton<LoggerService>()
             .AddSingleton<Random>()
-            .AddSingleton<ResponseService>()            
+            .AddSingleton<ResponseService>()
+            .AddSingleton<RaccoonGameService>()
+            .AddSingleton<RaccoonGameScheduler>()
             .AddSingleton<StartupService>();
         }
     }

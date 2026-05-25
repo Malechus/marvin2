@@ -56,6 +56,10 @@ namespace marvin2.Models
         /// DbSet for person-chore associations (base type for the assignment hierarchy).
         /// </summary>
         public DbSet<PersonChore> PersonChores{ get; set; }
+        /// <summary>
+        /// DbSet for person score records.
+        /// </summary>
+        public DbSet<PersonScore> PersonScores { get; set; }
 
 
         /// <summary>
@@ -97,6 +101,19 @@ namespace marvin2.Models
             modelBuilder.Entity<MonthlyChore>().HasBaseType<PersonChore>();
 
             modelBuilder.Entity<PersonChore>().UseTphMappingStrategy();
+
+            // Configure PersonScore entity
+            modelBuilder.Entity<PersonScore>()
+                .HasKey(ps => ps.PersonScoreId);
+
+            modelBuilder.Entity<PersonScore>()
+                .HasOne(ps => ps.Person)
+                .WithMany()
+                .HasForeignKey(ps => ps.PersonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PersonScore>()
+                .HasIndex(ps => ps.PersonId);
         }
     }
 }

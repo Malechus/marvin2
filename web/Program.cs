@@ -15,7 +15,7 @@ IConfigurationRoot config = configBuilder.Build();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton(config);
-builder.Services.AddSingleton<IPiService, PiService>();
+builder.Services.AddSingleton<PiService>();
 
 var app = builder.Build();
 

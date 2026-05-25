@@ -2,81 +2,155 @@
     ViewData["Title"] = "Main Dashboard";
 }
 
-<div class="view-body">
-    <div class="container row">
-        <div class="main-header">
-            <h4 class="main-header">HOFAC Dashboard</h4>
-        </div>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>M.A.R.V.I.N. Dashboard</h1>
     </div>
-    <div class="container row main-header">
-        <h5 class="main-header text-center">Status</h5>
-    </div>
-    <div class="container row status-container">
-        <div class="dashboard-grid-box">
-            <div class="container col-4 status-container">
-                <div class="dashboard-grid-item">
-                    <div class="pi-status">
-                        @if(ViewBag.Blocking){
-                            <p style="color: green;">Pi-Hole is up and blocking.</p>
-                        }
-                        @if(!ViewBag.Blocking){
-                            <p style="color: red;">Pi-Hole is down or not blocking.</p>
-                        }
-                    </div>
-                </div>
+
+    <div class="dashboard-grid">
+        <!-- Pi-Hole Status Card -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Pi-Hole Status</h3>
             </div>
-        </div>
-        <div class="dashboard-grid-box">
-            <div class="container col-4 status-container">
-                <div class="dashboard-grid-item">
-                    <p><b>Top Clients</b></p>
-                    @foreach(marvin2.Models.PiModels.QueryClient client in ViewBag.TopClients){
-                        <div class="client-box">
-                            <p>@client.name</p>
-                            <p>@client.ip</p>
-                            <p>@client.count</p>
+            <div class="card-body">
+                <div class="status-indicator">
+                    @if(ViewBag.Blocking)
+                    {
+                        <div class="status-badge status-active">
+                            <span class="status-dot"></span>
+                            <p>Active & Blocking</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="status-badge status-inactive">
+                            <span class="status-dot"></span>
+                            <p>Inactive or Not Blocking</p>
                         </div>
                     }
                 </div>
             </div>
         </div>
-        <div class="dashboard-grid-box">
-            <div class="container col-4 status-container">            
-                <div class="dashboard-grid-item">
-                    <p><b>Top Blocked Clients</b></p>
-                    @foreach(marvin2.Models.PiModels.QueryClient client1 in ViewBag.TopBlocked){
-                        <div class="client-box">
-                            <p>@client1.name</p>
-                            <p>@client1.ip</p>
-                            <p>@client1.count</p>
-                        </div>
+
+        <!-- Top Clients Card -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Top Clients</h3>
+            </div>
+            <div class="card-body">
+                <div class="clients-list">
+                    @if(ViewBag.TopClients != null && ViewBag.TopClients.Count > 0)
+                    {
+                        @foreach(marvin2.Models.PiModels.QueryClient client in ViewBag.TopClients)
+                        {
+                            <div class="client-item">
+                                <div class="client-name">@client.name</div>
+                                <div class="client-details">
+                                    <span class="client-ip">@client.ip</span>
+                                    <span class="client-count">@client.count queries</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-data">No client data available</p>
                     }
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container row link-container">
-        <div class="dashboard-grid-box">
-            <div class="container col-4 link-container">
-                <div class="dashboard-grid-item">
-                    <a href="https://192.168.1.2/admin/" target="_blank"><img src="pihole.svg" style="width: 120px; height: 120px"/></a>
-                    <p>Pi Hole Dashboard</p>
+
+        <!-- Top Blocked Clients Card -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Top Blocked Clients</h3>
+            </div>
+            <div class="card-body">
+                <div class="clients-list">
+                    @if(ViewBag.TopBlocked != null && ViewBag.TopBlocked.Count > 0)
+                    {
+                        @foreach(marvin2.Models.PiModels.QueryClient client in ViewBag.TopBlocked)
+                        {
+                            <div class="client-item">
+                                <div class="client-name">@client.name</div>
+                                <div class="client-details">
+                                    <span class="client-ip">@client.ip</span>
+                                    <span class="client-count">@client.count blocked</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-data">No blocked client data available</p>
+                    }
                 </div>
             </div>
         </div>
-        <div class="dashboard-grid-box">
-            <div class="container col-4 link-container">
-                <div class="dashboard-grid-item">
-                    <a asp-area="" asp-controller="Home" asp-action="Chores"><img src="chore_logo2.png" style="width: 120px; height: 120px;" /></a>
-                    <p>Chore Management</p>
+
+        <!-- Today's Chores Card -->
+        <div class="dashboard-card chores-card">
+            <div class="card-header">
+                <h3>Today's Chores</h3>
+            </div>
+            <div class="card-body">
+                <div class="chores-scroll">
+                    @if(ViewBag.TodaysChores != null && ViewBag.TodaysChores.Count > 0)
+                    {
+                        @foreach(var personChore in ViewBag.TodaysChores)
+                        {
+                            <div class="chore-item">
+                                <div class="chore-name">@personChore.Chore.Name</div>
+                                <div class="chore-person">@(personChore.Person?.Name ?? "Unassigned")</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-data">No chores for today</p>
+                    }
                 </div>
             </div>
         </div>
-        <div class="dashboard-grid-box">
-            <div class="container col-4 link-container">
-                <div class="dashboard-grid-item">
-                    
-                </div>
+
+        <!-- Placeholder: System Stats -->
+        <div class="dashboard-card placeholder">
+            <div class="card-header">
+                <h3>System Stats</h3>
+            </div>
+            <div class="card-body">
+                <p class="placeholder-text">Placeholder for system statistics</p>
+            </div>
+        </div>
+
+        <!-- Placeholder: Network Activity -->
+        <div class="dashboard-card placeholder">
+            <div class="card-header">
+                <h3>Network Activity</h3>
+            </div>
+            <div class="card-body">
+                <p class="placeholder-text">Placeholder for network activity</p>
+            </div>
+        </div>
+
+        <!-- Placeholder: Quick Actions -->
+        <div class="dashboard-card placeholder">
+            <div class="card-header">
+                <h3>Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <p class="placeholder-text">Placeholder for quick actions</p>
+            </div>
+        </div>
+
+        <!-- Placeholder: Alerts -->
+        <div class="dashboard-card placeholder">
+            <div class="card-header">
+                <h3>Alerts</h3>
+            </div>
+            <div class="card-body">
+                <p class="placeholder-text">Placeholder for alerts and notifications</p>
             </div>
         </div>
     </div>

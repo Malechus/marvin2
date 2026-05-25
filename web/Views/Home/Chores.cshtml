@@ -13,20 +13,20 @@
 
         <div id="dailyChoreFields" style="display:none;">
             <h4>Daily Chore</h4>
-            <input asp-for="DailyChore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="DailyChore.Description" class="form-control" placeholder="Description" />
+            <input asp-for="DailyChore.Chore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="DailyChore.Chore.Description" class="form-control" placeholder="Description" />
         </div>
 
         <div id="weeklyChoreFields" style="display:none;">
             <h4>Weekly Chore</h4>
-            <input asp-for="WeeklyChore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="WeeklyChore.Description" class="form-control" placeholder="Description" />
+            <input asp-for="WeeklyChore.Chore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="WeeklyChore.Chore.Description" class="form-control" placeholder="Description" />
         </div>
 
         <div id="monthlyChoreFields" style="display:none;">
             <h4>Monthly Chore</h4>
-            <input asp-for="MonthlyChore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="MonthlyChore.Description" class="form-control" placeholder="Description" />
+            <input asp-for="MonthlyChore.Chore.Name" class="form-control" placeholder="Name" />
+            <input asp-for="MonthlyChore.Chore.Description" class="form-control" placeholder="Description" />
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
