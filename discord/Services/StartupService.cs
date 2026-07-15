@@ -26,6 +26,7 @@ namespace marvin2.discord.Services
         private readonly ResponseService _responseService;
         private readonly PiService _piService;
         private readonly RaccoonGameScheduler _gameScheduler;
+        private readonly MediaFolderMonitorScheduler _mediaFolderScheduler;
         private readonly ISlashCommandHandler _listChores;
         private readonly ISlashCommandHandler _statusHandler;
         private readonly ISlashCommandHandler _huntHandler;
@@ -45,6 +46,7 @@ namespace marvin2.discord.Services
          /// <param name="gameService">Service for managing raccoon game state.</param>
          /// <param name="scoreService">Service for incrementing player scores.</param>
          /// <param name="gameScheduler">Service for scheduling and triggering raccoon games.</param>
+         /// <param name="mediaFolderScheduler">Service for periodically scanning media folders and posting change notifications.</param>
         public StartupService(
             IServiceProvider serviceProvider,
             DiscordSocketClient discordSocketClient,
@@ -55,7 +57,8 @@ namespace marvin2.discord.Services
             PiService piService,
             RaccoonGameService gameService,
             ScoreService scoreService,
-            RaccoonGameScheduler gameScheduler
+            RaccoonGameScheduler gameScheduler,
+            MediaFolderMonitorScheduler mediaFolderScheduler
         )
         {
             _provider = serviceProvider;
@@ -66,6 +69,7 @@ namespace marvin2.discord.Services
             _responseService = responseService;
             _piService = piService;
             _gameScheduler = gameScheduler;
+            _mediaFolderScheduler = mediaFolderScheduler;
             _listChores = new ListChores(_choreservice, _responseService);
             _statusHandler = new Status(_piService);
             _huntHandler = new HuntCommandHandler(gameService, choreService, scoreService);
@@ -79,15 +83,25 @@ namespace marvin2.discord.Services
         public async Task StartConnectionAsync()
         {
             _client.SlashCommandExecuted += SlashCommand_Executed;
-            _client.Ready += Client_Ready;
-            _client.Ready += Timer_Start;
-            _client.Ready += GameScheduler_Start;
-            _client.Ready += Announce;
+            _client.Ready += OnClientReadyAsync;
 
             await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
             await _client.StartAsync();
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+        }
+
+        /// <summary>
+        /// Orchestrates startup work that must happen after the Discord gateway reports ready.
+        /// Order matters: announce online status before starting media-folder startup scans.
+        /// </summary>
+        private async Task OnClientReadyAsync()
+        {
+            await Client_Ready();
+            await Timer_Start();
+            await GameScheduler_Start();
+            await Announce();
+            await MediaFolderScheduler_Start();
         }
         
         /// <summary>
@@ -108,6 +122,15 @@ namespace marvin2.discord.Services
         private async Task GameScheduler_Start()
         {
             _gameScheduler.StartAsync();
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Starts the media folder monitor scheduler when the Discord client is ready.
+        /// </summary>
+        private async Task MediaFolderScheduler_Start()
+        {
+            _mediaFolderScheduler.StartAsync();
             await Task.CompletedTask;
         }
         

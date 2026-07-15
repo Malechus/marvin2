@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fYEgrJbtUdb4kB2p/CxwZPvFIkSwUcjdpsKxgE/9G6WA55Igbn4q9vx5Tn1U+1Ts93J1Fgh4HXi2dFI7j9MNFA==",
+  "dgSpecHash": "ZQNWx/1JxLc=",
   "success": true,
   "projectFilePath": "/home/malechus/source/repos/marvin2/data/data.csproj",
   "expectedPackageFiles": [
@@ -122,7 +122,7 @@
     "/home/malechus/.nuget/packages/system.threading.tasks.extensions/4.6.0/system.threading.tasks.extensions.4.6.0.nupkg.sha512",
     "/home/malechus/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
     "/home/malechus/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
-    "/home/malechus/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.25/microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512"
+    "/home/malechus/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.28/microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512"
   ],
   "logs": []
 }
