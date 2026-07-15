@@ -1,6 +1,7 @@
 using System.Timers;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace marvin2.discord.Services
@@ -20,6 +21,7 @@ namespace marvin2.discord.Services
         private readonly int _minIntervalMs = 7200000; // 2 hours
         private readonly int _maxIntervalMs = 14400000; // 4 hours
         private readonly int _messageDeleteDelayMs = 300000; // 5 minutes
+        private readonly IConfigurationRoot _config;
 
         /// <summary>
         /// Initializes a new instance of <see cref="RaccoonGameScheduler"/>.
@@ -27,14 +29,17 @@ namespace marvin2.discord.Services
         /// <param name="discordClient">Discord socket client for accessing channels and guilds.</param>
         /// <param name="gameService">Service for tracking active raccoon games.</param>
         /// <param name="logger">Logger for recording game triggers and errors.</param>
+        /// <param name="config">Application configuration.</param>
         public RaccoonGameScheduler(
             DiscordSocketClient discordClient,
             RaccoonGameService gameService,
-            ILogger<RaccoonGameScheduler> logger)
+            ILogger<RaccoonGameScheduler> logger,
+            IConfigurationRoot config)
         {
             _discordClient = discordClient;
             _gameService = gameService;
             _logger = logger;
+            _config = config;
         }
 
         /// <summary>
@@ -45,6 +50,7 @@ namespace marvin2.discord.Services
         public void StartAsync()
         {
             _logger.LogInformation("RaccoonGameScheduler: Starting scheduler");
+            triggerGameAsync();
             scheduleNextGame();
         }
 
@@ -177,6 +183,10 @@ namespace marvin2.discord.Services
         /// <returns>A random public text channel, or null if none are available.</returns>
         private SocketTextChannel selectRandomPublicChannel()
         {
+            if (_config.GetValue<bool>("DevEnv"))
+            {
+                return _discordClient.GetChannel(_config.GetValue<ulong>("Discord:Channels:Announce")) as SocketTextChannel;
+            } 
             var publicChannels = getAllPublicChannels();
 
             if (publicChannels.Count == 0)

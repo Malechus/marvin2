@@ -26,19 +26,18 @@ namespace marvin2.discord.Services
         {
             string asciiRaccoon = """
                 ```
-                    ▄▄▄▄▄▄
-                   /      \
-                  | (●)●) |
-                  |    >   |
-                  |  \_/  |
-                   \      /
-                    ▀▀▀▀▀▀
+                                ,,,
+                             .'    `/\_/\
+                           .'       <@I@>
+                <((((((((((  )____(  \./
+                          \( \(   \(\(
+                           `-"`-"  " "
                 ```
                 """;
 
             var embed = new EmbedBuilder()
                 .WithColor(Color.Orange)
-                .WithTitle("🦝 A wild raccoon has appeared!")
+                .WithTitle("🦝 A wild raccoon has appeared! It's going to get our chickens!")
                 .WithDescription(asciiRaccoon)
                 .AddField("What do you do?", "Use **/hunt** to catch it or **/shoo** to scare it away!\nFirst person to respond wins a point!")
                 .WithFooter("Choose quickly!")
@@ -69,10 +68,10 @@ namespace marvin2.discord.Services
             var embed = new EmbedBuilder()
                 .WithColor(Color.Gold)
                 .WithTitle("🎉 Raccoon Caught!")
-                .WithDescription($"**{winner.Username}** successfully caught the raccoon!")
+                .WithDescription($"**{winner.Mention}** successfully caught the raccoon!")
                 .AddField("Current Score", score.ToString(), inline: true)
                 .WithThumbnailUrl(winner.GetAvatarUrl() ?? winner.GetDefaultAvatarUrl())
-                .WithFooter("Raccoon was faster next time...")
+                .WithFooter("You saved the chickens!")
                 .Build();
 
             return embed;

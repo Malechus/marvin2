@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using marvin2.discord.Services;
 using marvin2.Models;
 using marvin2.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace marvin2.discord.SlashCommands
 {
@@ -16,6 +17,7 @@ namespace marvin2.discord.SlashCommands
         private readonly RaccoonGameService _gameService;
         private readonly ChoreService _choreService;
         private readonly ScoreService _scoreService;
+        private readonly IConfigurationRoot _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HuntCommandHandler"/> class.
@@ -23,14 +25,17 @@ namespace marvin2.discord.SlashCommands
         /// <param name="gameService">Service for managing raccoon game state.</param>
         /// <param name="choreService">Service for accessing Person and chore data from the database.</param>
         /// <param name="scoreService">Service for incrementing player scores.</param>
+        /// <param name="config">Application configuration.</param>
         public HuntCommandHandler(
             RaccoonGameService gameService,
             ChoreService choreService,
-            ScoreService scoreService)
+            ScoreService scoreService,
+            IConfigurationRoot config)
         {
             _gameService = gameService;
             _choreService = choreService;
             _scoreService = scoreService;
+            _config = config;
         }
 
         /// <summary>
@@ -81,7 +86,7 @@ namespace marvin2.discord.SlashCommands
 
             if (game == null)
             {
-                await responseChannel.SendMessageAsync("No active raccoon game in this channel. Use a command that starts a game first!");
+                await responseChannel.SendMessageAsync("No active raccoon game in this channel. Keep trying!");
                 return;
             }
 
@@ -92,7 +97,9 @@ namespace marvin2.discord.SlashCommands
             }
 
             var user = command.User;
-            var person = _choreService.GetPerson(user.Username);
+            ulong userID = user.Id;
+            string personname = _config[$"People:{userID.ToString()}"];
+            var person = _choreService.GetPerson(personname);
 
             if (person == null)
             {

@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using marvin2.discord.Services;
 using marvin2.Models;
 using marvin2.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace marvin2.discord.SlashCommands
 {
@@ -17,6 +18,7 @@ namespace marvin2.discord.SlashCommands
         private readonly ChoreService _choreService;
         private readonly ScoreService _scoreService;
         private readonly ResponseService _responseService;
+        private readonly IConfigurationRoot _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShooCommandHandler"/> class.
@@ -25,16 +27,19 @@ namespace marvin2.discord.SlashCommands
         /// <param name="choreService">Service for accessing Person and chore data from the database.</param>
         /// <param name="scoreService">Service for incrementing player scores.</param>
         /// <param name="responseService">Service for generating random acknowledgement responses.</param>
+        /// <param name="config">Application configuration.</param>
         public ShooCommandHandler(
             RaccoonGameService gameService,
             ChoreService choreService,
             ScoreService scoreService,
-            ResponseService responseService)
+            ResponseService responseService,
+            IConfigurationRoot config)
         {
             _gameService = gameService;
             _choreService = choreService;
             _scoreService = scoreService;
             _responseService = responseService;
+            _config = config;
         }
 
         /// <summary>
@@ -60,8 +65,6 @@ namespace marvin2.discord.SlashCommands
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task HandleCommand(SocketSlashCommand command, SocketTextChannel responseChannel)
         {
-            await command.RespondAsync(_responseService.GetRandomResponse());
-
             _ = processShoo(command, responseChannel);
         }
 
@@ -87,7 +90,7 @@ namespace marvin2.discord.SlashCommands
 
             if (game == null)
             {
-                await responseChannel.SendMessageAsync("No active raccoon game in this channel. Use a command that starts a game first!");
+                await responseChannel.SendMessageAsync("No active raccoon game in this channel. Keep trying!");
                 return;
             }
 
@@ -98,7 +101,9 @@ namespace marvin2.discord.SlashCommands
             }
 
             var user = command.User;
-            var person = _choreService.GetPerson(user.Username);
+            ulong userID = user.Id;
+            string personname = _config[$"People:{userID.ToString()}"];
+            var person = _choreService.GetPerson(personname);
 
             if (person == null)
             {

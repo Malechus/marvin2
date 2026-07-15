@@ -72,8 +72,8 @@ namespace marvin2.discord.Services
             _mediaFolderScheduler = mediaFolderScheduler;
             _listChores = new ListChores(_choreservice, _responseService);
             _statusHandler = new Status(_piService);
-            _huntHandler = new HuntCommandHandler(gameService, choreService, scoreService);
-            _shooHandler = new ShooCommandHandler(gameService, choreService, scoreService, responseService);
+            _huntHandler = new HuntCommandHandler(gameService, choreService, scoreService, configurationRoot);
+            _shooHandler = new ShooCommandHandler(gameService, choreService, scoreService, responseService, configurationRoot);
         }
         
         /// <summary>
@@ -160,23 +160,18 @@ namespace marvin2.discord.Services
         /// <param name="command">The slash command that was executed.</param>
         private async Task SlashCommand_Executed(SocketSlashCommand command)
         {
-            //Immediately respond to command here with a random, pregenerated response.
-            //"Respnses" later will use the SocketTextChannel to PostAsync instead of "Responding"
-            //This eliminates the three second timer on command responses for the bot and allows for longer behind the scenes operations to take place
-            //NOTE: Long loading operations should still be put into interactions/context menus 
-            //Some use cases for this bot include printing lists of data to specific read only channels, which is why bypassing this rule is elected here
-            await command.RespondAsync(_responseService.GetRandomResponse());
-            
             SocketGuild guild = _client.GetGuild(ulong.Parse(_config["Discord:ServerID"]));
             SocketTextChannel responseChannel = (SocketTextChannel)command.Channel;
             
             switch(command.Data.Name)
             {
                 case "listchores":
+                    await command.RespondAsync(_responseService.GetRandomResponse());
                     responseChannel = (SocketTextChannel)guild.GetChannel(ulong.Parse(_config["Discord:Channels:Chore_List"]));
                     _listChores.HandleCommand(command, responseChannel);
                     break;
                 case "status":
+                    await command.RespondAsync(_responseService.GetRandomResponse());
                     _statusHandler.HandleCommand(command, responseChannel);
                     break;
                 case "hunt":
@@ -186,6 +181,7 @@ namespace marvin2.discord.Services
                     _shooHandler.HandleCommand(command, responseChannel);
                     break;
                 default:
+                    await command.RespondAsync(_responseService.GetRandomResponse());
                     command.RespondAsync("Command unrecognized, try again.");
                     break;
             }
