@@ -102,6 +102,8 @@ namespace marvin2
             .AddSingleton<ResponseService>()
             .AddSingleton<RaccoonGameService>()
             .AddSingleton<RaccoonGameScheduler>()
+            .AddSingleton<MediaFolderService>()
+            .AddSingleton<MediaFolderMonitorScheduler>()
             .AddSingleton<StartupService>();
         }
     }

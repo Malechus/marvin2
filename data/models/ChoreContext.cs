@@ -60,6 +60,11 @@ namespace marvin2.Models
         /// DbSet for person score records.
         /// </summary>
         public DbSet<PersonScore> PersonScores { get; set; }
+        /// <summary>
+        /// DbSet for observed media folder titles, used to detect additions and removals
+        /// in the monitored media folders across application restarts.
+        /// </summary>
+        public DbSet<MediaFolderItem> MediaFolderItems { get; set; }
 
 
         /// <summary>
@@ -114,6 +119,11 @@ namespace marvin2.Models
 
             modelBuilder.Entity<PersonScore>()
                 .HasIndex(ps => ps.PersonId);
+
+            // Configure MediaFolderItem entity
+            modelBuilder.Entity<MediaFolderItem>()
+                .HasIndex(mfi => new { mfi.FolderKey, mfi.Title })
+                .IsUnique();
         }
     }
 }

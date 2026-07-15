@@ -29,7 +29,7 @@ namespace data.Migrations
                         name: "FK_PersonScores_People_PersonId",
                         column: x => x.PersonId,
                         principalTable: "People",
-                        principalColumn: "PersonId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
