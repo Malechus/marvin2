@@ -109,6 +109,15 @@ namespace marvin2.discord.Services
         /// </summary>
         private async Task triggerGameAsync()
         {
+            TimeSpan endOfDay = new TimeSpan(21, 0, 0);
+            TimeSpan startOfDay = new TimeSpan(9, 0, 0);
+            TimeSpan now = DateTime.Now.TimeOfDay;
+            if ((now < startOfDay) || (now > endOfDay))
+            {
+                _logger.LogInformation("Out of time bounds for game.");
+                return;
+            }
+            
             try
             {
                 var channel = selectRandomPublicChannel();
