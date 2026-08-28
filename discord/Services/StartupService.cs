@@ -175,9 +175,11 @@ namespace marvin2.discord.Services
                     _statusHandler.HandleCommand(command, responseChannel);
                     break;
                 case "hunt":
+                    await command.RespondAsync("Hunting....");
                     _huntHandler.HandleCommand(command, responseChannel);
                     break;
                 case "shoo":
+                    await command.RespondAsync("Yelling at the racoon....");
                     _shooHandler.HandleCommand(command, responseChannel);
                     break;
                 default:

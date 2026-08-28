@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version Condition="'$(RELEASE_VERSION)' != ''">$(RELEASE_VERSION)</Version>
+    <VersionPrefix Condition="'$(RELEASE_VERSION)' == ''">1.5.0</VersionPrefix>
+    <VersionSuffix Condition="'$(RELEASE_VERSION)' == ''">$([System.DateTime]::UtcNow.ToString(`yyyyMMdd-HHmm`))</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,16 +28,16 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
-<ItemGroup>
-  <None Include="../appsettings.json">
-    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-  </None>
-  <None Include="../appsettings.Development.json" Condition="Exists('../appsettings.Development.json')">
-    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-  </None>
-  <None Include="../appsettings.Production.json" Condition="Exists('../appsettings.Production.json')">
-    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-  </None>
-</ItemGroup>
+  <ItemGroup>
+    <None Include="../appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Development.json" Condition="Exists('../appsettings.Development.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Production.json" Condition="Exists('../appsettings.Production.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

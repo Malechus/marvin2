@@ -47,6 +47,7 @@ namespace marvin2.Services
         private List<DailyChore> getDailyChores()
         {
             List<DailyChore> dailyChores = _context.DailyChores
+                .Where(dc => dc.IsActive == true)
                 .ToList();
 
             return dailyChores;
@@ -70,7 +71,8 @@ namespace marvin2.Services
         private List<WeeklyChore> getWeeklyChores(string dayOfWeek)
         {
             List<WeeklyChore> weeklyChores = _context.WeeklyChores
-                .Where(c => c.DayOfWeek.ToLower() == dayOfWeek.ToLower())
+                .Where(c => c.DayOfWeek.ToLower() == dayOfWeek.ToLower()
+                && c.IsActive == true)
                 .ToList();
 
             return weeklyChores;
@@ -94,7 +96,8 @@ namespace marvin2.Services
         private List<MonthlyChore>? getMonthlyChores(int dayOfMonth)
         {
             List<MonthlyChore>? monthlyChores = _context.MonthlyChores
-                .Where(mc => mc.DayOfMonth == dayOfMonth)
+                .Where(mc => mc.DayOfMonth == dayOfMonth
+                && mc.IsActive == true)
                 .ToList();
 
             return monthlyChores;
@@ -163,7 +166,8 @@ namespace marvin2.Services
             List<PersonChore> list = _context.PersonChores
                 .Include(pc => pc.Chore)
                 .Include(pc => pc.Person)
-                .Where(c => c.Person.Id == person.Id)
+                .Where(c => c.Person.Id == person.Id
+                && c.IsActive == true)
                 .ToList();
 
             return list;
