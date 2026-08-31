@@ -4,33 +4,129 @@
     ViewData["Title"] = "Chore Dashboard";
 }
 
-<div class="view-body">
-    <form asp-action="Chores" method="post">
+<div class="view-body chore-view">
+    <p><a asp-action="ManageChores">Manage Chores</a></p>
+
+    @if (Model.Success == true)
+    {
+        <div class="alert alert-success">Chore assignment saved.</div>
+    }
+    else if (Model.Success == false)
+    {
+        <div class="alert alert-danger">Please choose a person, a chore, and fill in the required fields for the selected chore type.</div>
+    }
+
+    <form asp-action="Chores" method="post" class="chore-form">
         <div class="form-group">
             <label for="ChoreType">Chore Type</label>
-            <select asp-for="ChoreTypes" asp-items="Model.ChoreTypes" class="form-control" id="ChoreType"></select>
+            <select asp-for="SelectedChoreType" asp-items="Model.ChoreTypes" class="form-control" id="ChoreType"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="PersonId">Person</label>
+            <select asp-for="PersonId" asp-items="Model.People" class="form-control" id="PersonId">
+                <option value="">-- select a person --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="ChoreId">Chore</label>
+            <select asp-for="ChoreId" asp-items="Model.Chores" class="form-control" id="ChoreId">
+                <option value="">-- select a chore --</option>
+            </select>
         </div>
 
         <div id="dailyChoreFields" style="display:none;">
             <h4>Daily Chore</h4>
-            <input asp-for="DailyChore.Chore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="DailyChore.Chore.Description" class="form-control" placeholder="Description" />
+            <select asp-for="DailyPriority" class="form-control">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
         </div>
 
         <div id="weeklyChoreFields" style="display:none;">
             <h4>Weekly Chore</h4>
-            <input asp-for="WeeklyChore.Chore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="WeeklyChore.Chore.Description" class="form-control" placeholder="Description" />
+            <select asp-for="WeeklyDayOfWeek" class="form-control">
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+            </select>
         </div>
 
         <div id="monthlyChoreFields" style="display:none;">
             <h4>Monthly Chore</h4>
-            <input asp-for="MonthlyChore.Chore.Name" class="form-control" placeholder="Name" />
-            <input asp-for="MonthlyChore.Chore.Description" class="form-control" placeholder="Description" />
+            <input asp-for="MonthlyDayOfMonth" type="number" min="1" max="31" class="form-control" placeholder="Day of month" />
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+
+    <hr />
+
+    <h3>Current Chore Assignments</h3>
+    <table class="table chore-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Person</th>
+                <th>Chore</th>
+                <th>Schedule</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chore in (List<marvin2.Models.DailyChore>)ViewBag.DailyChores)
+            {
+                <tr>
+                    <td>Daily</td>
+                    <td>@chore.Person?.Name</td>
+                    <td>@chore.Chore?.Name</td>
+                    <td>Priority: @chore.priority</td>
+                    <td>
+                        <form asp-action="DeletePersonChore" method="post">
+                            <input type="hidden" name="id" value="@chore.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @foreach (var chore in (List<marvin2.Models.WeeklyChore>)ViewBag.WeeklyChores)
+            {
+                <tr>
+                    <td>Weekly</td>
+                    <td>@chore.Person?.Name</td>
+                    <td>@chore.Chore?.Name</td>
+                    <td>@chore.DayOfWeek</td>
+                    <td>
+                        <form asp-action="DeletePersonChore" method="post">
+                            <input type="hidden" name="id" value="@chore.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @foreach (var chore in (List<marvin2.Models.MonthlyChore>)ViewBag.MonthlyChores)
+            {
+                <tr>
+                    <td>Monthly</td>
+                    <td>@chore.Person?.Name</td>
+                    <td>@chore.Chore?.Name</td>
+                    <td>Day @chore.DayOfMonth</td>
+                    <td>
+                        <form asp-action="DeletePersonChore" method="post">
+                            <input type="hidden" name="id" value="@chore.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 @section Scripts {

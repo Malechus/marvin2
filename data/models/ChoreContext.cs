@@ -49,6 +49,10 @@ namespace marvin2.Models
         /// </summary>
         public DbSet<MonthlyChore> MonthlyChores { get; set; }
         /// <summary>
+        /// DbSet for chores that can be assigned to people.
+        /// </summary>
+        public DbSet<Chore> Chores { get; set; }
+        /// <summary>
         /// DbSet for people stored in the database.
         /// </summary>
         public DbSet<Person> People { get; set; }
@@ -99,6 +103,9 @@ namespace marvin2.Models
         /// <param name="modelBuilder">Model builder used to configure entity mappings.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Table name predates the "Chores" DbSet; pin it so EF's convention doesn't rename it.
+            modelBuilder.Entity<Chore>().ToTable("Chore");
+
             modelBuilder.Entity<WeeklyChore>().HasBaseType<PersonChore>();
             
             modelBuilder.Entity<DailyChore>().HasBaseType<PersonChore>();

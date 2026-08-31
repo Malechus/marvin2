@@ -1,0 +1,59 @@
+@model marvin2.Models.WebModels.ManageChoresViewModel
+
+@{
+    ViewData["Title"] = "Manage Chores";
+}
+
+<div class="view-body chore-view">
+    <p><a asp-action="Chores">Back to Chore Assignments</a></p>
+
+    @if (Model.Success == false)
+    {
+        <div class="alert alert-danger">A chore name is required.</div>
+    }
+
+    <h3>Add a Chore</h3>
+    <form asp-action="ManageChores" method="post" class="chore-form">
+        <div class="form-group">
+            <input asp-for="NewChore.Name" class="form-control chore-name-input" placeholder="Name" />
+        </div>
+        <div class="form-group">
+            <textarea asp-for="NewChore.Description" class="form-control" placeholder="Description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <textarea asp-for="NewChore.Notes" class="form-control" placeholder="Notes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Chore</button>
+    </form>
+
+    <hr />
+
+    <h3>Existing Chores</h3>
+    <table class="table chore-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Notes</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chore in Model.ExistingChores)
+            {
+                <tr>
+                    <td>@chore.Name</td>
+                    <td>@chore.Description</td>
+                    <td>@chore.Notes</td>
+                    <td>
+                        <a asp-action="EditChore" asp-route-id="@chore.Id" class="btn btn-sm btn-secondary">Edit</a>
+                        <form asp-action="DeleteChore" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@chore.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -30,7 +30,6 @@ namespace marvin2.Models
 
         /// <summary>
         /// Navigation property referencing the <see cref="Person"/> who is assigned the chore.
-        /// Setting this property triggers <see cref="OnSetPerson(Person)"/> when a non-null value is provided.
         /// </summary>
         public virtual Person? Person
         {
@@ -43,7 +42,6 @@ namespace marvin2.Models
                 if(value != null)
                 {
                     this._person = value;
-                    OnSetPerson(value);
                 }
             }
         }
@@ -56,7 +54,6 @@ namespace marvin2.Models
 
         /// <summary>
         /// Navigation property referencing the <see cref="Chore"/> that is assigned.
-        /// Setting this property triggers <see cref="OnSetChore(Chore)"/> when a non-null value is provided.
         /// </summary>
         public virtual Chore? Chore
         {
@@ -69,33 +66,10 @@ namespace marvin2.Models
                 if(value != null)
                 {
                     this._chore = value;
-                    OnSetChore(value);
                 }
             }
         }
 
-        /// <summary>
-        /// Hook invoked when the <see cref="Person"/> property is set to a non-null value.
-        /// Implementations may perform additional initialization. This method is private and
-        /// is called from the <see cref="Person"/> setter.
-        /// </summary>
-        /// <param name="person">The person that was set.</param>
-        private void OnSetPerson(Person person) 
-        {
-            Person = person;
-        }
-        
-        /// <summary>
-        /// Hook invoked when the <see cref="Chore"/> property is set to a non-null value.
-        /// Implementations may perform additional initialization. This method is private and
-        /// is called from the <see cref="Chore"/> setter.
-        /// </summary>
-        /// <param name="chore">The chore that was set.</param>
-        private void OnSetChore(Chore chore)
-        {
-            Chore = chore;
-        }
-        
         /// <summary>
         /// Marks this person-chore association as active.
         /// </summary>

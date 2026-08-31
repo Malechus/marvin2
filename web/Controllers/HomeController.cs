@@ -78,20 +78,11 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Chores()
     {
-        ViewBag.WeeklyChores = _context.WeeklyChores
-            .Where(wc => wc.IsActive)
-            .ToList();
-
-        ViewBag.DailyChores = _context.DailyChores
-            .Where(dc => dc.IsActive)
-            .ToList();
-
-        ViewBag.MonthlyChores = _context.MonthlyChores
-            .Where(mc => mc.IsActive)
-            .ToList();
+        PopulateChoreViewBag();
 
         ChoreViewModel cvm = new ChoreViewModel();
-        cvm.ChoreTypes.Where(s => s.Value == "dailychore").First().Selected = true;
+        cvm.People = new SelectList(_context.People.OrderBy(p => p.Name).ToList(), "Id", "Name");
+        cvm.Chores = new SelectList(_context.Chores.OrderBy(c => c.Name).ToList(), "Id", "Name");
 
         return View(cvm);
     }
@@ -103,21 +94,33 @@ public class HomeController : Controller
         {
             cvmUpdated.AdditionalItem = true;
             cvmUpdated.Success = false;
+            PopulateChoreViewBag();
+            cvmUpdated.People = new SelectList(_context.People.OrderBy(p => p.Name).ToList(), "Id", "Name", cvmUpdated.PersonId);
+            cvmUpdated.Chores = new SelectList(_context.Chores.OrderBy(c => c.Name).ToList(), "Id", "Name", cvmUpdated.ChoreId);
             return View(cvmUpdated);
         }
-        
-        switch(cvmUpdated.ChoreTypes.SelectedValue)
+
+        Person? person = _context.People.Find(cvmUpdated.PersonId);
+        Chore? chore = _context.Chores.Find(cvmUpdated.ChoreId);
+
+        switch(cvmUpdated.SelectedChoreType)
         {
             case "dailychore":
-                _context.DailyChores.Add(cvmUpdated.DailyChore);
+                DailyChore dailyChore = new DailyChore { Person = person, Chore = chore, priority = cvmUpdated.DailyPriority };
+                dailyChore.Activate();
+                _context.DailyChores.Add(dailyChore);
                 _context.SaveChanges();
                 break;
             case "weeklychore":
-                _context.WeeklyChores.Add(cvmUpdated.WeeklyChore);
+                WeeklyChore weeklyChore = new WeeklyChore { Person = person, Chore = chore, DayOfWeek = cvmUpdated.WeeklyDayOfWeek };
+                weeklyChore.Activate();
+                _context.WeeklyChores.Add(weeklyChore);
                 _context.SaveChanges();
                 break;
             case "monthlychore":
-                _context.MonthlyChores.Add(cvmUpdated.MonthlyChore);
+                MonthlyChore monthlyChore = new MonthlyChore { Person = person, Chore = chore, DayOfMonth = cvmUpdated.MonthlyDayOfMonth };
+                monthlyChore.Activate();
+                _context.MonthlyChores.Add(monthlyChore);
                 _context.SaveChanges();
                 break;
             default:
@@ -126,11 +129,130 @@ public class HomeController : Controller
         }
 
         ChoreViewModel cvmFresh = new ChoreViewModel();
-        cvmFresh.ChoreTypes.Where(s => s.Value == "dailychore").First().Selected = true;
+        cvmFresh.People = new SelectList(_context.People.OrderBy(p => p.Name).ToList(), "Id", "Name");
+        cvmFresh.Chores = new SelectList(_context.Chores.OrderBy(c => c.Name).ToList(), "Id", "Name");
         cvmFresh.AdditionalItem = true;
         cvmFresh.Success = true;
 
+        PopulateChoreViewBag();
+
         return View(cvmFresh);
+    }
+
+    [HttpPost]
+    public IActionResult DeletePersonChore(int id)
+    {
+        PersonChore? personChore = _context.PersonChores.Find(id);
+        if (personChore != null)
+        {
+            _context.PersonChores.Remove(personChore);
+            _context.SaveChanges();
+        }
+
+        return RedirectToAction("Chores");
+    }
+
+    /// <summary>
+    /// Loads the current daily/weekly/monthly chore assignments (with their Person and Chore
+    /// navigation properties) into ViewBag for display in the Chores view.
+    /// </summary>
+    private void PopulateChoreViewBag()
+    {
+        ViewBag.WeeklyChores = _context.WeeklyChores
+            .Include(wc => wc.Person)
+            .Include(wc => wc.Chore)
+            .Where(wc => wc.IsActive)
+            .ToList();
+
+        ViewBag.DailyChores = _context.DailyChores
+            .Include(dc => dc.Person)
+            .Include(dc => dc.Chore)
+            .Where(dc => dc.IsActive)
+            .ToList();
+
+        ViewBag.MonthlyChores = _context.MonthlyChores
+            .Include(mc => mc.Person)
+            .Include(mc => mc.Chore)
+            .Where(mc => mc.IsActive)
+            .ToList();
+    }
+
+    [HttpGet]
+    public IActionResult ManageChores()
+    {
+        ManageChoresViewModel vm = new ManageChoresViewModel
+        {
+            ExistingChores = _context.Chores.OrderBy(c => c.Name).ToList()
+        };
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    public IActionResult ManageChores(ManageChoresViewModel vm)
+    {
+        if (string.IsNullOrWhiteSpace(vm.NewChore?.Name))
+        {
+            vm.Success = false;
+            vm.ExistingChores = _context.Chores.OrderBy(c => c.Name).ToList();
+            return View(vm);
+        }
+
+        _context.Chores.Add(new Chore
+        {
+            Name = vm.NewChore.Name,
+            Description = vm.NewChore.Description,
+            Notes = vm.NewChore.Notes
+        });
+        _context.SaveChanges();
+
+        return RedirectToAction("ManageChores");
+    }
+
+    [HttpGet]
+    public IActionResult EditChore(int id)
+    {
+        Chore? chore = _context.Chores.Find(id);
+        if (chore == null)
+        {
+            return RedirectToAction("ManageChores");
+        }
+
+        return View(chore);
+    }
+
+    [HttpPost]
+    public IActionResult EditChore(Chore chore)
+    {
+        Chore? existing = _context.Chores.Find(chore.Id);
+        if (existing == null)
+        {
+            return RedirectToAction("ManageChores");
+        }
+
+        existing.Name = chore.Name;
+        existing.Description = chore.Description;
+        existing.Notes = chore.Notes;
+        _context.SaveChanges();
+
+        return RedirectToAction("ManageChores");
+    }
+
+    [HttpPost]
+    public IActionResult DeleteChore(int id)
+    {
+        bool inUse = _context.PersonChores.Any(pc => pc.Chore != null && pc.Chore.Id == id);
+        if (!inUse)
+        {
+            Chore? chore = _context.Chores.Find(id);
+            if (chore != null)
+            {
+                _context.Chores.Remove(chore);
+                _context.SaveChanges();
+            }
+        }
+
+        return RedirectToAction("ManageChores");
     }
 
     public IActionResult Privacy()
