@@ -5,7 +5,7 @@
   },
   "projects": {
     "/home/malechus/source/repos/marvin2/data/data.csproj": {
-      "version": "1.5.0-20260831-1909",
+      "version": "1.5.0-20260831-1916",
       "restore": {
         "projectUniqueName": "/home/malechus/source/repos/marvin2/data/data.csproj",
         "projectName": "data",
@@ -136,7 +136,7 @@
       }
     },
     "/home/malechus/source/repos/marvin2/web/web.csproj": {
-      "version": "0.1.0-20260831-1909",
+      "version": "0.1.0-20260831-1916",
       "restore": {
         "projectUniqueName": "/home/malechus/source/repos/marvin2/web/web.csproj",
         "projectName": "web",
