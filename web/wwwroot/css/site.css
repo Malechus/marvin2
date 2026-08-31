@@ -12,6 +12,21 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
+/* Keep the interface deliberately square, including Bootstrap components. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+a {
+  color: #03A062;
+}
+
+a:hover {
+  color: #ffffff;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -22,23 +37,74 @@ body {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.form-control {
+.form-control,
+.form-select {
   background-color: #000000;
   border-color: #2a3f5f;
-  border-radius: 0;
-  color: #667eea;
+  color: #f3f4f6;
 }
 
-.form-control::placeholder {
-  color: #667eea;
+.form-control::placeholder,
+.form-select::placeholder {
+  color: #a0a0a0;
   opacity: 0.75;
 }
 
-.form-control:focus {
+.form-control:focus,
+.form-select:focus {
   background-color: #000000;
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-  color: #667eea;
+  border-color: #03A062;
+  box-shadow: 0 0 0 0.2rem rgba(3, 160, 98, 0.25);
+  color: #f3f4f6;
+}
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-success,
+.btn-warning,
+.btn-info {
+  background-color: #0f1419;
+  border-color: #2a3f5f;
+  color: #f3f4f6;
+}
+
+.btn:hover,
+.btn:focus,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover,
+.btn-success:hover,
+.btn-warning:hover,
+.btn-info:hover {
+  background-color: #1a1f2e;
+  border-color: #03A062;
+  color: #ffffff;
+}
+
+.table {
+  --bs-table-color: #f3f4f6;
+  --bs-table-bg: transparent;
+  --bs-table-border-color: #2a3f5f;
+  --bs-table-striped-color: #f3f4f6;
+  --bs-table-striped-bg: rgba(3, 160, 98, 0.08);
+  --bs-table-hover-color: #ffffff;
+  --bs-table-hover-bg: rgba(3, 160, 98, 0.15);
+}
+
+.alert {
+  background-color: #1a1f2e;
+  border-color: #2a3f5f;
+  color: #f3f4f6;
+}
+
+.alert-success {
+  border-left: 3px solid #34d399;
+}
+
+.alert-danger {
+  border-left: 3px solid #ef4444;
 }
 
 body {
@@ -97,7 +163,7 @@ h4.main-header {
   font-size: 1.1rem;
   color: #ffffff;
   text-decoration: none;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #03A062 0%, #027A4B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -119,7 +185,7 @@ h4.main-header {
 }
 
 .marvin-nav-links .nav-link:hover {
-  color: #667eea;
+  color: #03A062;
 }
 
 .marvin-nav-toggle {
@@ -129,7 +195,6 @@ h4.main-header {
   z-index: 1000;
   background: linear-gradient(135deg, #1a1f2e 0%, #16212b 100%);
   border: 1px solid #2a3f5f;
-  border-radius: 6px;
   color: #e0e0e0;
   width: 32px;
   height: 32px;
@@ -139,8 +204,8 @@ h4.main-header {
 }
 
 .marvin-nav-toggle:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #03A062;
+  color: #03A062;
 }
 
 .marvin-nav-toggle.collapsed .marvin-nav-toggle-icon {
@@ -169,7 +234,7 @@ h4.main-header {
   font-weight: 600;
   color: #ffffff;
   margin: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #03A062 0%, #027A4B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -199,7 +264,6 @@ h4.main-header {
 .dashboard-card {
   background: linear-gradient(135deg, #1a1f2e 0%, #16212b 100%);
   border: 1px solid #2a3f5f;
-  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -209,8 +273,8 @@ h4.main-header {
 }
 
 .dashboard-card:hover {
-  border-color: #667eea;
-  box-shadow: 0 8px 12px rgba(102, 126, 234, 0.2);
+  border-color: #03A062;
+  box-shadow: 0 8px 12px rgba(3, 160, 98, 0.2);
   transform: translateY(-2px);
 }
 
@@ -247,16 +311,14 @@ h4.main-header {
 
 .card-body::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
 }
 
 .card-body::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.5);
-  border-radius: 3px;
+  background: rgba(3, 160, 98, 0.5);
 }
 
 .card-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.8);
+  background: rgba(3, 160, 98, 0.8);
 }
 
 /* Status Indicator */
@@ -273,7 +335,6 @@ h4.main-header {
   align-items: center;
   gap: 10px;
   padding: 20px;
-  border-radius: 8px;
   text-align: center;
 }
 
@@ -291,7 +352,7 @@ h4.main-header {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: 50% !important;
   animation: pulse 2s infinite;
 }
 
@@ -330,14 +391,13 @@ h4.main-header {
 
 .client-item {
   padding: 12px;
-  background-color: rgba(102, 126, 234, 0.08);
-  border-left: 3px solid #667eea;
-  border-radius: 4px;
+  background-color: rgba(3, 160, 98, 0.08);
+  border-left: 3px solid #03A062;
   transition: all 0.2s ease;
 }
 
 .client-item:hover {
-  background-color: rgba(102, 126, 234, 0.15);
+  background-color: rgba(3, 160, 98, 0.15);
   transform: translateX(4px);
 }
 
@@ -357,11 +417,11 @@ h4.main-header {
 
 .client-ip {
   font-family: 'Courier New', monospace;
-  color: #667eea;
+  color: #03A062;
 }
 
 .client-count {
-  color: #7a8cd9;
+  color: #03A062;
   font-weight: 500;
 }
 
@@ -379,14 +439,13 @@ h4.main-header {
 
 .chore-item {
   padding: 12px;
-  background-color: rgba(118, 75, 162, 0.08);
-  border-left: 3px solid #764ba2;
-  border-radius: 4px;
+  background-color: rgba(2, 122, 75, 0.08);
+  border-left: 3px solid #027A4B;
   transition: all 0.2s ease;
 }
 
 .chore-item:hover {
-  background-color: rgba(118, 75, 162, 0.15);
+  background-color: rgba(2, 122, 75, 0.15);
   transform: translateX(4px);
 }
 
@@ -429,7 +488,7 @@ h4.main-header {
 .chore-view .btn:hover,
 .chore-view .btn:focus {
   background-color: #1a1f2e;
-  border-color: #667eea;
+  border-color: #03A062;
   color: #ffffff;
 }
 
