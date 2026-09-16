@@ -10,6 +10,9 @@ if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
 
 configBuilder.AddJsonFile($"appsettings.{env}.json");
 
+configBuilder.AddJsonFile("appsettings.Greetings.json");
+configBuilder.AddJsonFile("appsettings.Responses.json");
+
 IConfigurationRoot config = configBuilder.Build();
 
 // Add services to the container.
