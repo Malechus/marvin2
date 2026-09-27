@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using System.Text;
 
 namespace marvin2.discord.Services
 {
@@ -24,6 +25,18 @@ namespace marvin2.discord.Services
             _random = random;
             _config = config;
         }
+
+        public string BuildGreeting(){
+            string hello = GetRandomGreeting();
+            string version = GetVersionInfo();
+            //string test = GetSelfTest();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(hello);
+            sb.AppendLine(version);
+
+            return sb.ToString();
+        }
         
         /// <summary>
         /// Retrieves a random greeting string from the "Greetings" configuration section.
@@ -39,6 +52,18 @@ namespace marvin2.discord.Services
             int maxVal = greetings.Count;
             return greetings[_random.Next(0, maxVal)];
         }
+
+	private string GetVersionInfo(){
+		string versionInfo = "Discord Version: " + _config["Version:DiscordVersion"] + " | " + "Unified Version: " + _config["Version:UnifiedVersion"] + " | " + _config["Version:VersionName"];
+		return versionInfo;
+	}
+
+	private string GetSelfTest(){
+            //TODO: Add self test
+            throw new Exception("pending automation");
+            return "pending";
+
+	}
         
         /// <summary>
         /// Retrieves a random response string from the "Responses" configuration section.

@@ -134,8 +134,7 @@ namespace marvin2.discord.Services
         {
             ISocketMessageChannel channel = await _client.GetChannelAsync(ulong.Parse(_config["Discord:Channels:Announce"])) as ISocketMessageChannel;
 
-            await channel.SendMessageAsync(_responseService.GetRandomGreeting());
-            //TODO add self test
+            await channel.SendMessageAsync(_responseService.BuildGreeting());
         }
 
         /// <summary>
