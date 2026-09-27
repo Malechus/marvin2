@@ -44,6 +44,9 @@
     <None Include="../appsettings.Greetings.json" Condition="Exists('../appsettings.Greetings.json')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="../appsettings.Versioning.json" Condition="Exists('../appsettings.Versioning.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,12 @@
-﻿@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+/*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~*/ /*~~~~~~~~~~*/ /*~~~~~~~~~*/
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - M.A.R.V.I.N.</title>
+    <title>/*~~~~~~~~~~~~~~*/ - M.A.R.V.I.N.</title>
     <link rel="icon" type="image/png" href="~/marvin-fingers.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -33,27 +33,28 @@
                 <span class="marvin-nav-toggle-icon">&laquo;</span>
             </button>
         </nav>
-        @if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Production"){
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ ~~ /*~~~~~~~~~~*/
             <div class="row dev-warn">
                 <span class="dev-warn">DEV. DEV. DEV.</span>
             </div>
-        }
+        ~
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            @RenderBody()
+            /*~~~~~~~~~*/
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - Marvin - Web Version: @Configuration["Version:WebVersion"] - Unified Version: @Configuration["Version:UnifiedVersion"] - @Configuration["Version:VersionName"] - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - Marvin - Web Version: /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ - Unified V@Configuration["Version:VersionName"] - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~*/ /*~~~~~*/ /*~~*/
 </body>
 </html>
+

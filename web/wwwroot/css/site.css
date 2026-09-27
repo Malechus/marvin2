@@ -108,7 +108,8 @@ a:hover {
 }
 
 body {
-  margin-bottom: 60px;
+  padding-top: 65px;
+  padding-bottom: 70px;
 }
 
 div.main-header {
@@ -150,6 +151,25 @@ h4.main-header {
   padding-top: 0;
   padding-bottom: 0;
   border-bottom: none;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 900;
+  background-color: #0f1419;
+}
+
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 0;
+  z-index: 900;
+  background-color: #0f1419;
 }
 
 .marvin-nav-inner {
