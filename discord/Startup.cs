@@ -41,7 +41,9 @@ namespace marvin2
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{_env}.json");
+                .AddJsonFile($"appsettings.{_env}.json")
+	    	.AddJsonFile("appsettings.Greetings.json")
+		.AddJsonFile("appsettings.Responses.json");
 
             _config = builder.Build();
         }
