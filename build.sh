@@ -103,7 +103,7 @@ sudo mkdir -p web
 cd /srv/marvin/repo/marvin2/web || exit 2
 sudo dotnet publish ./web.csproj -c Release
 
-sudo cp -u -r ./bin/Release/net8.0/* /srv/marvin/web/
+sudo cp -u -r ./bin/Release/net8.0/publish/* /srv/marvin/web/
 
 echo "Installing web application"
 install_web
