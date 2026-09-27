@@ -8,6 +8,7 @@ using marvin2.Services;
 using System.Timers;
 using data.Services;
 using System.Net.Sockets;
+using Microsoft.Extensions.Logging;
 
 namespace marvin2.discord.Services
 {
@@ -32,6 +33,8 @@ namespace marvin2.discord.Services
         private readonly ISlashCommandHandler _huntHandler;
         private readonly ISlashCommandHandler _shooHandler;
         private System.Timers.Timer _timer;
+        private bool _hasInitialized = false;
+        private readonly ILogger<StartupService> _logger;
         
          /// <summary>
          /// Constructs a new instance of <see cref="StartupService"/>.
@@ -47,6 +50,7 @@ namespace marvin2.discord.Services
          /// <param name="scoreService">Service for incrementing player scores.</param>
          /// <param name="gameScheduler">Service for scheduling and triggering raccoon games.</param>
          /// <param name="mediaFolderScheduler">Service for periodically scanning media folders and posting change notifications.</param>
+         /// <param name="logger">Logger for recording Ready events and reconnect diagnostics.</param>
         public StartupService(
             IServiceProvider serviceProvider,
             DiscordSocketClient discordSocketClient,
@@ -58,7 +62,8 @@ namespace marvin2.discord.Services
             RaccoonGameService gameService,
             ScoreService scoreService,
             RaccoonGameScheduler gameScheduler,
-            MediaFolderMonitorScheduler mediaFolderScheduler
+            MediaFolderMonitorScheduler mediaFolderScheduler,
+            ILogger<StartupService> logger
         )
         {
             _provider = serviceProvider;
@@ -70,6 +75,7 @@ namespace marvin2.discord.Services
             _piService = piService;
             _gameScheduler = gameScheduler;
             _mediaFolderScheduler = mediaFolderScheduler;
+            _logger = logger;
             _listChores = new ListChores(_choreservice, _responseService);
             _statusHandler = new Status(_piService);
             _huntHandler = new HuntCommandHandler(gameService, choreService, scoreService, configurationRoot);
@@ -94,14 +100,30 @@ namespace marvin2.discord.Services
         /// <summary>
         /// Orchestrates startup work that must happen after the Discord gateway reports ready.
         /// Order matters: announce online status before starting media-folder startup scans.
+        /// Discord.Net raises <c>Ready</c> on every gateway reconnect/resume, not just once at
+        /// process start, so one-time setup (timer, schedulers) is guarded to run only on the
+        /// first invocation to avoid creating duplicate timers/schedulers. Every invocation is
+        /// logged, and reconnects trigger a distinct "service restored" announcement so
+        /// interruptions remain visible in Discord.
         /// </summary>
         private async Task OnClientReadyAsync()
         {
             await Client_Ready();
-            await Timer_Start();
-            await GameScheduler_Start();
-            await Announce();
-            await MediaFolderScheduler_Start();
+
+            if (!_hasInitialized)
+            {
+                _hasInitialized = true;
+                _logger.LogInformation("StartupService: Client_Ready fired for the first time, running startup sequence");
+
+                await Timer_Start();
+                await GameScheduler_Start();
+                await Announce();
+                await MediaFolderScheduler_Start();
+                return;
+            }
+
+            _logger.LogWarning("StartupService: Client_Ready fired again (gateway reconnect/resume); skipping re-initialization of timer and schedulers");
+            await AnnounceReconnect();
         }
         
         /// <summary>
@@ -112,8 +134,21 @@ namespace marvin2.discord.Services
         {
             ISocketMessageChannel channel = await _client.GetChannelAsync(ulong.Parse(_config["Discord:Channels:Announce"])) as ISocketMessageChannel;
 
-            await channel.SendMessageAsync(_responseService.GetRandomGreeting());
-            //TODO add self test
+            await channel.SendMessageAsync(_responseService.BuildGreeting());
+        }
+
+        /// <summary>
+        /// Sends a message to the announce channel indicating the bot reconnected after a
+        /// gateway interruption (e.g. dropped connection, Discord-side session reset).
+        /// This is distinct from <see cref="Announce"/>, which only runs on the initial
+        /// startup, so operators can tell the difference between "bot just started" and
+        /// "bot recovered from an interruption" in the channel history.
+        /// </summary>
+        private async Task AnnounceReconnect()
+        {
+            ISocketMessageChannel channel = await _client.GetChannelAsync(ulong.Parse(_config["Discord:Channels:Announce"])) as ISocketMessageChannel;
+
+            await channel.SendMessageAsync("Service was restored after an interruption.");
         }
         
         /// <summary>
@@ -191,6 +226,16 @@ namespace marvin2.discord.Services
         
         private async Task Timer_Start()
         {
+            // Guard against ever having more than one live timer, even if this method
+            // is somehow invoked more than once (e.g. future callers of the re-arm
+            // logic in Timer_Elapsed racing with a reconnect).
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Elapsed -= Timer_Elapsed;
+                _timer.Dispose();
+            }
+
             DateTime now = DateTime.Now;
             DateTime executeTime = new DateTime(now.Year, now.Month, now.Day, 6, 0, 0);
 
@@ -200,6 +245,7 @@ namespace marvin2.discord.Services
             _timer = new System.Timers.Timer(ticks);
             _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
+            await Task.CompletedTask;
         }
         
         private void Timer_Elapsed(object Sender, ElapsedEventArgs e)

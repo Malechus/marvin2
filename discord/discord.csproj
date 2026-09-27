@@ -35,6 +35,15 @@
     <None Include="../appsettings.Production.json" Condition="Exists('../appsettings.Production.json')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="../appsettings.Responses.json" Condition="Exists('../appsettings.Responses.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Greetings.json" Condition="Exists('../appsettings.Greetings.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Versioning.json" Condition="Exists('../appsettings.Versioning.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

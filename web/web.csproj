@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Version Condition="'$(RELEASE_VERSION)' != ''">$(RELEASE_VERSION)</Version>
-    <VersionPrefix Condition="'$(RELEASE_VERSION)' == ''">0.0.1</VersionPrefix>
+    <VersionPrefix Condition="'$(RELEASE_VERSION)' == ''">0.1.0</VersionPrefix>
     <VersionSuffix Condition="'$(RELEASE_VERSION)' == ''">$([System.DateTime]::UtcNow.ToString(`yyyyMMdd-HHmm`))</VersionSuffix>
   </PropertyGroup>
 
@@ -25,6 +25,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="../appsettings.Production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Responses.json" Condition="Exists('../appsettings.Responses.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Greetings.json" Condition="Exists('../appsettings.Greetings.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="../appsettings.Versioning.json" Condition="Exists('../appsettings.Versioning.json')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
